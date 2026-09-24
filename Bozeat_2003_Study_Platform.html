@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Duck with Four Legs — Study Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf7f1; --card:#ffffff; --line:#e8e1d3; --gold:#c9a96e; --dgold:#a8854a; --pgold:#f6eedd;
+  --navy:#34466b; --ink:#2f3542; --muted:#6b7280;
+  --blue:#e3ecf7; --rose:#f7e4e4; --green:#e2f1e6; --lav:#ece6f6; --peach:#fbe9d9;
+  --ok:#2f8a57; --bad:#c0392b; --r:16px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',system-ui,sans-serif;font-size:16px;line-height:1.6}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',Georgia,serif;color:var(--navy);line-height:1.2;margin:0 0 .4em}
+h1{font-size:2.5rem} h2{font-size:2.1rem} h3{font-size:1.5rem;margin-top:1.4em} h4{font-size:1.2rem}
+a{color:var(--dgold)}
+.app{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+/* sidebar */
+.side{position:sticky;top:0;height:100vh;background:#fffdf8;border-right:1px solid var(--line);padding:26px 18px;display:flex;flex-direction:column;gap:10px}
+.brand{font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:var(--navy);font-weight:700;line-height:1.15;margin-bottom:14px}
+.brand small{display:block;font-family:'DM Sans';font-size:.75rem;color:var(--dgold);font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-top:6px}
+.navbtn{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border:1px solid transparent;border-radius:12px;background:transparent;font:inherit;font-weight:500;color:var(--navy);cursor:pointer;text-align:left}
+.navbtn:hover{background:var(--pgold)}
+.navbtn.active{background:var(--pgold);border-color:var(--gold);font-weight:700}
+.side .foot{margin-top:auto;font-size:.85rem;color:var(--muted)}
+.side .foot b{color:var(--navy);font-family:'Cormorant Garamond',serif;font-size:1.15rem}
+.pbar{height:9px;background:var(--line);border-radius:9px;overflow:hidden;margin:8px 0 4px}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--dgold));transition:width .4s}
+main{padding:34px 42px 80px;max-width:1180px;width:100%;min-width:0}
+.panel{display:none} .panel.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px 26px;margin:18px 0;box-shadow:0 1px 2px rgba(52,70,107,.04)}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--dgold);font-weight:700}
+.sub{color:var(--muted);font-size:1.05rem;margin-top:-4px}
+/* overview */
+.note{background:var(--pgold);border:1px solid var(--gold);border-radius:var(--r);padding:24px 28px}
+.note p{margin:.5em 0}
+.note .sig{font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--dgold);font-style:italic}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin:18px 0}
+.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+.stat b{display:block;font-family:'Cormorant Garamond',serif;font-size:2.4rem;color:var(--navy);line-height:1}
+.stat span{font-size:.82rem;color:var(--muted)}
+table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:12px 0;font-size:.93rem;background:#fff}
+th{background:var(--navy);color:#fff;text-align:left;padding:10px 12px;font-weight:700}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#fcfaf5}
+td:first-child{font-weight:700;color:var(--navy)}
+.tbl-wrap{overflow-x:auto}
+/* timeline */
+.tl{position:relative;overflow-x:auto;padding:10px 4px 6px}
+.tl-track{position:relative;display:flex;gap:0;min-width:900px;padding-top:44px}
+.tl-track:before{content:"";position:absolute;left:10px;right:10px;top:62px;height:3px;background:linear-gradient(90deg,var(--gold),var(--dgold));border-radius:3px}
+.tl-pt{flex:1;display:flex;flex-direction:column;align-items:center;cursor:pointer;background:none;border:0;font:inherit;padding:0 2px}
+.tl-pt .yr{position:relative;top:-40px;font-weight:700;color:var(--navy);font-size:.9rem}
+.tl-pt .dot{width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--gold);margin-top:-30px;transition:.2s}
+.tl-pt .who{font-size:.74rem;color:var(--muted);margin-top:8px;text-align:center;line-height:1.25}
+.tl-pt.on .dot,.tl-pt:hover .dot{background:var(--dgold);transform:scale(1.25)}
+.tl-info{margin-top:14px;background:var(--blue);border-radius:14px;padding:14px 18px;min-height:64px}
+/* lesson tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.tile{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;cursor:pointer;text-align:left;font:inherit;transition:.2s}
+.tile:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 6px 16px rgba(168,133,74,.12)}
+.tile .te{font-size:1.8rem}
+.tile .tn{font-size:.7rem;letter-spacing:.12em;color:var(--dgold);font-weight:700;margin-top:4px}
+.tile .tt{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--navy);line-height:1.15;margin:3px 0}
+.tile .ts{font-size:.82rem;color:var(--muted);line-height:1.35}
+.tile .tick{position:absolute;top:10px;right:12px;width:24px;height:24px;border-radius:50%;background:var(--ok);color:#fff;font-size:.8rem;display:none;align-items:center;justify-content:center;font-weight:700}
+.tile.done .tick{display:flex}
+.tile.done{background:#fbfefc;border-color:#b9dcc6}
+.partlabel{grid-column:1/-1;font-family:'Cormorant Garamond',serif;font-size:1.25rem;color:var(--dgold);font-weight:700;margin-top:6px}
+/* lessons */
+.pills{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:7px;position:sticky;top:0;background:var(--bg);padding:10px 0 12px;z-index:5;border-bottom:1px solid var(--line);scrollbar-width:thin}
+.pill{flex:0 0 auto;white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:5px 12px;font:inherit;font-size:.82rem;cursor:pointer;color:var(--navy)}
+.pill.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.pill.seen:not(.on){background:var(--green);border-color:#b9dcc6}
+.lesson{display:none} .lesson.on{display:block}
+.lesson h2 .em{margin-right:8px}
+.lgrid{display:grid;grid-template-columns:3fr 2fr;gap:22px;align-items:start;margin:18px 0}
+.diagram{margin:0;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px}
+.diagram svg{width:100%;height:auto;display:block}
+.points{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.points li{background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 14px 11px 46px;position:relative;font-size:.95rem;line-height:1.45}
+.points li .ic{position:absolute;left:13px;top:10px;font-size:1.2rem}
+.hook{background:var(--lav);border-radius:14px;padding:13px 18px;margin:12px 0}
+.friend{background:var(--green);border-radius:14px;padding:13px 18px;margin:12px 0}
+.key{background:var(--pgold);border:2px solid var(--gold);border-radius:16px;padding:16px 20px;margin:16px 0;font-size:1.06rem}
+.key:before{content:"★ KEY INSIGHT";display:block;font-size:.75rem;letter-spacing:.14em;font-weight:700;color:var(--dgold);margin-bottom:4px}
+.debate{background:var(--rose);border-radius:14px;padding:13px 18px;margin:12px 0}
+.bg{font-size:.72rem;background:var(--blue);color:var(--navy);border-radius:6px;padding:1px 7px;font-weight:700;vertical-align:middle;white-space:nowrap}
+.demo{background:var(--blue);border:1px dashed #9fb6d6;border-radius:18px;padding:20px 22px;margin:18px 0}
+.demo h4{margin-top:0}
+.btn{border:1px solid var(--gold);background:#fff;color:var(--navy);border-radius:10px;padding:8px 14px;font:inherit;font-size:.9rem;cursor:pointer;font-weight:500}
+.btn:hover{background:var(--pgold)}
+.btn.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn.primary:hover{background:#26375a}
+.btn.sel{background:var(--navy);color:#fff}
+.watch{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+.watch a{display:inline-flex;gap:6px;align-items:center;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.88rem;color:var(--navy)}
+.watch a:hover{border-color:var(--gold);background:var(--pgold)}
+.check details{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 16px;margin:8px 0}
+.check summary{cursor:pointer;font-weight:700;color:var(--navy)}
+.check details p{margin:.6em 0 0;background:var(--peach);border-radius:10px;padding:10px 14px}
+.lnav{display:flex;justify-content:space-between;gap:10px;margin-top:26px;border-top:1px solid var(--line);padding-top:18px}
+.fb{margin-top:10px;padding:10px 14px;border-radius:10px;background:#fff;display:none}
+.fb.show{display:block}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.dragrow{display:flex;flex-direction:column;gap:6px;max-width:360px}
+.dragitem{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:6px 10px}
+.dragitem .n{width:22px;color:var(--dgold);font-weight:700}
+.dragitem .lab{flex:1}
+.dragitem button{border:1px solid var(--line);background:var(--pgold);border-radius:6px;cursor:pointer;width:28px;height:26px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.vote{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;background:#fff;border-radius:10px;padding:8px 12px;margin:6px 0;border:1px solid var(--line)}
+.vote .opts{display:flex;gap:6px}
+/* flashcards */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:16px}
+.fc{perspective:1000px;height:210px;cursor:pointer}
+.fc-in{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-f,.fc-b{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;padding:18px;display:flex;flex-direction:column;border:1px solid var(--line)}
+.fc-f{background:#fff}
+.fc-f .q{font-family:'Cormorant Garamond',serif;font-size:1.3rem;color:var(--navy);font-weight:700;margin:auto 0;line-height:1.2}
+.fc-f .tp{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--dgold);font-weight:700}
+.fc-f .hint{font-size:.72rem;color:var(--muted)}
+.fc-b{background:var(--pgold);transform:rotateY(180deg);font-size:.9rem;line-height:1.45;overflow:auto;border-color:var(--gold)}
+/* mcq */
+.scorebar{position:sticky;top:0;z-index:6;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.scorebar .pbar{flex:1;min-width:120px}
+.mcq{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:14px 0}
+.mcq .qn{font-size:.72rem;letter-spacing:.12em;color:var(--dgold);font-weight:700}
+.mcq .qt{font-weight:700;color:var(--navy);margin:4px 0 10px}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#fcfaf5;font:inherit;cursor:pointer;color:var(--ink)}
+.opt:hover:not(:disabled){border-color:var(--gold);background:var(--pgold)}
+.opt:disabled{cursor:default}
+.opt.right{background:#dff1e5;border-color:var(--ok);color:#1d5c39;font-weight:700}
+.opt.wrong{background:#f8dcd8;border-color:var(--bad);color:#8a2a1f}
+.expl{display:none;margin-top:10px;background:var(--blue);border-radius:10px;padding:10px 14px;font-size:.93rem}
+.mcq.done .expl{display:block}
+.final{display:none;text-align:center;background:var(--pgold);border:2px solid var(--gold);border-radius:18px;padding:26px}
+.final b{font-family:'Cormorant Garamond',serif;font-size:3rem;color:var(--navy)}
+/* svg text classes */
+svg text{font-family:'DM Sans',sans-serif}
+.sv-h{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:22px;fill:#34466b}
+.sv-t{font-size:13px;fill:#2f3542}
+.sv-s{font-size:11.5px;fill:#6b7280}
+.sv-b{font-size:13px;font-weight:700;fill:#34466b}
+.sv-g{font-size:12px;fill:#a8854a;font-weight:700}
+.slider{width:100%;accent-color:#a8854a}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.mini{font-size:.85rem;color:var(--muted)}
+.syscol{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.sys{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;cursor:pointer;font:inherit}
+.sys.off{background:var(--rose);border-color:#e0b4b4;text-decoration:line-through;color:#8a2a1f}
+@media (max-width:900px){
+  .syscol{grid-template-columns:1fr}
+  .app{grid-template-columns:minmax(0,1fr)}
+  .side{position:sticky;top:0;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px 12px;gap:6px;z-index:20;border-right:0;border-bottom:1px solid var(--line)}
+  .brand{display:none}
+  .navbtn{width:auto;padding:7px 10px;font-size:.85rem}
+  .side .foot{margin:0;flex-basis:100%;font-size:.75rem;display:flex;align-items:center;gap:10px}
+  .side .foot b{font-size:.95rem;white-space:nowrap}
+  .side .foot .pbar{flex:1;margin:0}
+  .side .foot .ptxt{white-space:nowrap}
+  main{padding:18px 16px 60px}
+  .lgrid,.two{grid-template-columns:1fr}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .pills{position:static}
+  h1{font-size:2rem} h2{font-size:1.7rem}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><marker id="ah1" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#a8854a"/></marker><marker id="ahR" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/></marker><marker id="ahN" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#34466b"/></marker></defs></svg>
+<div class="app">
+<aside class="side">
+  <div class="brand">A Duck with Four Legs<small>Bozeat et al. (2003)</small></div>
+  <button class="navbtn active" data-panel="overview">🏛️ Overview</button>
+  <button class="navbtn" data-panel="lessons">📖 Lessons</button>
+  <button class="navbtn" data-panel="flash">🃏 Flashcards</button>
+  <button class="navbtn" data-panel="mcq">✅ MCQ</button>
+  <div class="foot">
+    <b>Prepared for Sezen</b>
+    <div class="pbar"><i id="sideProg"></i></div>
+    <span class="ptxt" id="sideProgTxt">0 of 11 lessons visited</span>
+  </div>
+</aside>
+<main>
+
+<!-- ================= OVERVIEW ================= -->
+<section class="panel active" id="overview">
+  <div class="eyebrow">Problem 4c · Cognitive Neuropsychology, 2003, 20(1), 27–47</div>
+  <h1>A duck with four legs</h1>
+  <p class="sub">Bozeat, Lambon Ralph, Graham, Patterson, Wilkin, Rowland, Rogers &amp; Hodges (2003): investigating the structure of conceptual knowledge using picture drawing in semantic dementia.</p>
+
+  <div class="note">
+    <p><b>Dear Sezen,</b></p>
+    <p>This paper answers a deceptively simple question: <i>when meaning is slowly destroyed by disease, what goes first?</i> The answer tells us how meaning was built in the first place. Patients with semantic dementia can still see, copy and reason, yet they gradually forget what a duck is. Ask them to draw one from its name and they leave out the bill and the webbed feet — and sometimes give it four legs. That error is not random. It is a window into how the brain stores concepts: as overlapping features, in which what many things share is sturdy and what makes a thing special is fragile.</p>
+    <p>Why should you care beyond the exam? First, this is the logic of <b>neuropsychology</b>: learn about the healthy mind from a selectively damaged one. Second, the paper is a masterclass in <b>looking at the pattern of errors, not just the score</b> — a habit that serves you just as well when you read assessment or engagement data at NN. And third, semantic dementia is a reminder for inclusive workplaces that fluent speech can hide a real loss of word meaning. (Those last two links are my applications, not claims from the paper.)</p>
+    <p><b>How to use this platform:</b> it follows the paper’s own structure — introduction, Study 1, Study 2, discussion — across 11 lectures. Look at each diagram first, then read the bullets. Try every 🧪 demo, answer each 🧩 check out loud before opening it, and finish with the flashcards and MCQs. Numbers labelled <span class="bg">≈ read from figure</span> are my readings of the paper’s bar charts (it gives no exact values); anything labelled <span class="bg">illustrative</span> just shows the idea.</p>
+    <p class="sig">— Your professor</p>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><b>11</b><span>lessons</span></div>
+    <div class="stat"><b>16</b><span>key studies</span></div>
+    <div class="stat"><b>7</b><span>interactive demos</span></div>
+    <div class="stat"><b id="statFc">40</b><span>flashcards</span></div>
+    <div class="stat"><b id="statMcq">20</b><span>MCQs</span></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🎯 Learning Objectives</h3>
+    <ul>
+      <li><b>What is semantic dementia?</b> Its cause, symptoms and what is spared <span class="sv-s">→ Lectures 1, 5</span></li>
+      <li><b>What can we learn from semantic dementia about semantic memory?</b> <span class="sv-s">→ Lectures 2, 3, 7, 10, 11</span></li>
+      <li>Explain the two competing views of how semantic memory is organised (hierarchical vs distributed features) <span class="sv-s">→ Lecture 2</span></li>
+      <li>Explain why drawing is a useful test of semantic knowledge and how it was scored <span class="sv-s">→ Lecture 4</span></li>
+      <li>Describe the methods and findings of Study 1 and Study 2, including the key numbers <span class="sv-s">→ Lectures 5–10</span></li>
+      <li>Explain the role of shared vs distinctive features in omissions and intrusions <span class="sv-s">→ Lectures 3, 10</span></li>
+      <li>Evaluate the conclusion that SD reflects damage to a unitary, amodal semantic system <span class="sv-s">→ Lecture 11</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">📚 Key Terms — read these first</h3>
+    <div class="tbl-wrap"><table>
+      <tr><th>Term</th><th>Plain-language definition</th><th>Example</th></tr>
+      <tr><td>Semantic memory</td><td>Knowledge about objects, facts and concepts, and about words and their meanings</td><td>Knowing a duck swims and has a bill</td></tr>
+      <tr><td>Semantic dementia (SD)</td><td>A progressive brain disease that selectively erodes conceptual knowledge, caused by temporal-lobe atrophy</td><td>Fluent speech, but “what is a duck?”</td></tr>
+      <tr><td>Atrophy</td><td>Shrinkage of brain tissue as cells are lost</td><td>Polar and inferolateral temporal lobes, L &gt; R</td></tr>
+      <tr><td>Anomia</td><td>Difficulty finding or producing the names of things</td><td>Cannot name a picture of a camel</td></tr>
+      <tr><td>Amodal</td><td>Not tied to one input or output channel — the same knowledge serves words, pictures, sounds and actions</td><td>Fails the same items in naming and drawing</td></tr>
+      <tr><td>Feature</td><td>A property of a concept</td><td>“has wings”, “has a neck”</td></tr>
+      <tr><td>Shared feature</td><td>A property true of many concepts in a category or domain</td><td>Legs and eyes (animals)</td></tr>
+      <tr><td>Distinctive feature</td><td>A property true of one or a few concepts only</td><td>The iridescent green feathers of a male mallard</td></tr>
+      <tr><td>Domain</td><td>The broadest division of concepts in this study</td><td>Living things vs artefacts (man-made objects)</td></tr>
+      <tr><td>Omission</td><td>A target feature the patient leaves out</td><td>No beak on the duck</td></tr>
+      <tr><td>Intrusion</td><td>A wrong feature the patient adds</td><td>Four legs on the duck</td></tr>
+      <tr><td>Prototypical</td><td>Resembling the average, most typical member of a category</td><td>A generic four-legged “animal”</td></tr>
+      <tr><td>Centroid</td><td>The average feature pattern of all members of a category</td><td>The “average animal”</td></tr>
+      <tr><td>Connectionist network</td><td>A computer model of simple units whose connections store knowledge as patterns</td><td>Rogers et al. (2002a)</td></tr>
+      <tr><td>Structural description system</td><td>A proposed separate store of what objects look like (their shape), independent of meaning</td><td>Tested by object decision</td></tr>
+      <tr><td>Object decision task</td><td>Decide whether a picture shows a real object or a made-up one</td><td>A real camel vs a chimera</td></tr>
+    </table></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🕰️ Timeline <span class="sv-s">— click a point</span></h3>
+    <div class="tl"><div class="tl-track" id="tlTrack"></div></div>
+    <div class="tl-info" id="tlInfo">Click any year to see what happened.</div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🗺️ The lessons</h3>
+    <div class="tiles" id="tiles"></div>
+  </div>
+
+  <div class="card" style="background:var(--pgold);border-color:var(--gold)">
+    <h3 style="margin-top:0">🧵 Synthesis — one thesis for the whole paper</h3>
+    <p id="synth1"><b>Thesis: semantic dementia does not erase knowledge at random — it strips concepts from the outside in, and that pattern reveals a single, distributed, feature-based semantic system in which shared features are robust and distinctive features are fragile.</b> Because SD damages meaning while sparing perception, praxis and short-term visual memory, drawing becomes a clean window on conceptual knowledge. Study 1 shows that drawing, naming and word–picture matching decline together (r = .96–.99), so one central store is failing, and that drawings lose their distinctive details: artefacts become boxes, animals become generic, sometimes with four legs. Study 2 nails down the mechanism. Performance worsens precisely as a task leans more on meaning (immediate copy &gt; delayed copy &gt; drawing to name) and as the disease advances, while meaningless shapes are copied normally. Distinctive features are omitted most, and the features that intrude are those shared across a whole domain. Even the apparent “animal” deficit dissolves once feature distinctiveness is taken into account: animals simply have more shared features to intrude. The hierarchy seen in SD — duck → bird → animal — therefore need not be built into memory. It emerges from how features overlap, the same overlap that makes some members typical and others not.</p>
+  </div>
+</section>
+
+<!-- ================= LESSONS ================= -->
+<section class="panel" id="lessons">
+  <div class="pills" id="pills"></div>
+
+<!-- ============ LECTURE 1 ============ -->
+<article class="lesson" data-emoji="🧩" data-title="Semantic dementia: a natural experiment" data-sub="Why a selective loss of meaning is so informative" data-part="I">
+  <div class="eyebrow">Lecture 1 of 11 · Introduction · What is semantic dementia?</div>
+  <h2><span class="em">🧩</span>Semantic dementia: a natural experiment</h2>
+  <p class="sub">When one system breaks and the others keep working, the damage shows you how that system was built.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 490" role="img" aria-label="Selective loss of semantic memory">
+        <text x="20" y="30" class="sv-h">One system fails, the rest work</text>
+        <text x="20" y="50" class="sv-s">The cognitive profile of the SD patients in this paper</text>
+        <!-- systems grid -->
+        <rect x="20" y="66" width="340" height="86" rx="14" fill="#f7e4e4" stroke="#c0392b" stroke-width="2"/>
+        <text x="36" y="92" class="sv-b">❌ SEMANTIC MEMORY — impaired</text>
+        <text x="36" y="114" class="sv-t">naming · word–picture matching · category</text>
+        <text x="36" y="132" class="sv-t">fluency · Pyramids &amp; Palm Trees · drawing</text>
+        <g>
+          <rect x="20" y="164" width="166" height="62" rx="12" fill="#e2f1e6" stroke="#a9d3b7"/>
+          <text x="32" y="188" class="sv-b">✅ Perception</text><text x="32" y="208" class="sv-s">VOSP, object decision</text>
+          <rect x="194" y="164" width="166" height="62" rx="12" fill="#e2f1e6" stroke="#a9d3b7"/>
+          <text x="206" y="188" class="sv-b">✅ Visuospatial / praxis</text><text x="206" y="208" class="sv-s">copying the Rey figure</text>
+          <rect x="20" y="234" width="166" height="62" rx="12" fill="#e2f1e6" stroke="#a9d3b7"/>
+          <text x="32" y="258" class="sv-b">✅ Reasoning</text><text x="32" y="278" class="sv-s">Raven’s matrices</text>
+          <rect x="194" y="234" width="166" height="62" rx="12" fill="#e2f1e6" stroke="#a9d3b7"/>
+          <text x="206" y="258" class="sv-b">✅ Working memory</text><text x="206" y="278" class="sv-s">digit span (Study 2)</text>
+          <rect x="20" y="304" width="340" height="62" rx="12" fill="#fbe9d9" stroke="#e7c3a1"/>
+          <text x="32" y="328" class="sv-b">≈ Non-verbal episodic memory</text><text x="32" y="348" class="sv-s">Rey recall mostly good — weak only in the most severe patients</text>
+        </g>
+        <!-- brain -->
+        <rect x="374" y="66" width="210" height="300" rx="14" fill="#fff" stroke="#e8e1d3"/>
+        <text x="388" y="90" class="sv-b">Where?</text>
+        <g transform="translate(366,86) scale(0.62)">
+          <path d="M52 176 C50 118 112 82 186 82 C262 82 306 124 304 176 C303 212 282 232 250 236 C238 262 206 276 172 270 C140 264 120 246 116 232 C82 230 54 212 52 176 Z" fill="#f3f0ea" stroke="#8a94a6" stroke-width="2.5"/>
+          <path d="M120 140 C150 128 200 126 240 138" fill="none" stroke="#c8ccd4" stroke-width="2"/>
+          <path d="M170 96 C176 130 176 160 166 196" fill="none" stroke="#c8ccd4" stroke-width="2"/>
+          <ellipse cx="160" cy="232" rx="58" ry="24" fill="#e7a3a3"/>
+        </g>
+        <text x="388" y="276" class="sv-t">Focal atrophy of the</text>
+        <text x="388" y="294" class="sv-t">polar &amp; inferolateral</text>
+        <text x="388" y="312" class="sv-t">temporal lobes</text>
+        <text x="388" y="336" class="sv-s">often bilateral, L &gt; R (MRI)</text>
+        <text x="388" y="354" class="sv-s">brain sketch: illustrative</text>
+        <!-- logic -->
+        <rect x="20" y="380" width="564" height="100" rx="14" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="36" y="406" class="sv-g">THE NEUROPSYCHOLOGICAL LOGIC</text>
+        <text x="36" y="432" class="sv-t">Selective damage + intact other systems → any error pattern must</text>
+        <text x="36" y="450" class="sv-t">come from the damaged system → SD is “a particularly informative</text>
+        <text x="36" y="468" class="sv-t">testing ground” for the structure of semantic memory.</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">📖</span><b>Semantic memory</b> = our knowledge about objects, facts and concepts, as well as words and their meaning.</li>
+      <li><span class="ic">🧩</span><b>Semantic dementia</b>: a <b>very selective</b>, progressive impairment of conceptual knowledge, with circumscribed temporal-lobe atrophy.</li>
+      <li><span class="ic">🗣️</span>Patients present with a <b>progressive loss of vocabulary</b> in both expressive and receptive language, in the context of <b>fluent speech</b>.</li>
+      <li><span class="ic">🌐</span>Previous work: deficits from sound recognition to naming-from-definition, with <b>strong item consistency across modalities</b> → a central, modality-independent deficit (Bozeat et al., 2000).</li>
+      <li><span class="ic">🔬</span>Other diseases (herpes simplex encephalitis, Alzheimer’s) also reveal semantic organisation, but SD’s selectivity makes it especially clean.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> SD is like a library where only the <i>dictionary</i> is fading — the lights, shelves and librarians all still work, so every mistake tells you something about the dictionary.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “Semantic dementia is a disease that slowly wipes out what words and things mean, because part of the temporal lobe shrinks. People still talk fluently and can copy pictures, so if they make errors on meaning tasks, we know it’s their knowledge that’s broken — which lets us study how knowledge is organised.”</div>
+  <div class="key">Because semantic dementia damages conceptual knowledge while sparing perception, praxis and reasoning, the pattern of its errors reveals the structure of the semantic system itself.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Element</th><th>Semantic dementia (as described in the paper)</th></tr>
+    <tr><td>Cause</td><td style="font-weight:400">Circumscribed atrophy of the polar and inferolateral temporal lobe(s), usually left &gt; right</td></tr>
+    <tr><td>Core symptom</td><td style="font-weight:400">Selective, progressive loss of conceptual knowledge</td></tr>
+    <tr><td>Language</td><td style="font-weight:400">Progressive loss of vocabulary (expressive + receptive); speech remains fluent</td></tr>
+    <tr><td>Scope</td><td style="font-weight:400">Across modalities: words, pictures, sounds, object use — same items fail in different tasks</td></tr>
+    <tr><td>Diagnostic criteria</td><td style="font-weight:400">Hodges et al. (1992, 1995); psychiatric disorders and treatable causes excluded</td></tr>
+    <tr><td>Why it matters</td><td style="font-weight:400">Supports the view that conceptual knowledge rests on a unitary, central system (Caramazza et al., 1990)</td></tr>
+  </table></div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=semantic+dementia+explained" target="_blank" rel="noopener">▶ Semantic dementia explained</a>
+    <a href="https://www.youtube.com/results?search_query=semantic+variant+primary+progressive+aphasia+patient" target="_blank" rel="noopener">▶ Semantic variant PPA</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. Define semantic dementia, including its neural basis.</summary><p>A progressive neurodegenerative syndrome with a selective loss of conceptual knowledge across modalities, presenting as loss of vocabulary with fluent speech, caused by focal atrophy of the polar and inferolateral temporal lobes (usually left &gt; right).</p></details>
+    <details><summary>2. Why is SD a “particularly informative testing ground”?</summary><p>The deficit is highly selective: semantic knowledge is impaired while perception, visuospatial skills, reasoning and working memory are relatively intact, so error patterns can be attributed to the semantic system itself.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 2 ============ -->
+<article class="lesson" data-emoji="🌳" data-title="Hierarchy or features?" data-sub="Two views on how semantic memory is organised" data-part="I">
+  <div class="eyebrow">Lecture 2 of 11 · Introduction · What SD can reveal</div>
+  <h2><span class="em">🌳</span>Hierarchy or features?</h2>
+  <p class="sub">Is knowledge stored as a tree of categories — or does the tree grow out of overlapping features?</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Hierarchical versus distributed feature view">
+        <text x="20" y="30" class="sv-h">Two views of the semantic store</text>
+        <!-- left: hierarchy -->
+        <rect x="20" y="44" width="276" height="330" rx="14" fill="#e3ecf7" stroke="#9fb6d6"/>
+        <text x="34" y="68" class="sv-b">🌳 Hierarchical view</text>
+        <text x="34" y="84" class="sv-s">Warrington (1975)</text>
+        <g stroke="#34466b" stroke-width="2"><line x1="158" y1="118" x2="96" y2="170"/><line x1="158" y1="118" x2="222" y2="170"/><line x1="96" y1="186" x2="66" y2="238"/><line x1="96" y1="186" x2="130" y2="238"/></g>
+        <rect x="100" y="100" width="116" height="26" rx="13" fill="#fff" stroke="#34466b"/><text x="158" y="118" text-anchor="middle" class="sv-t">living things</text>
+        <rect x="52" y="168" width="88" height="24" rx="12" fill="#fff" stroke="#34466b"/><text x="96" y="185" text-anchor="middle" class="sv-t">animals</text>
+        <rect x="180" y="168" width="88" height="24" rx="12" fill="#fff" stroke="#34466b"/><text x="224" y="185" text-anchor="middle" class="sv-t">plants</text>
+        <rect x="36" y="236" width="60" height="24" rx="12" fill="#fff" stroke="#34466b"/><text x="66" y="253" text-anchor="middle" class="sv-t">duck</text>
+        <rect x="104" y="236" width="60" height="24" rx="12" fill="#fff" stroke="#34466b"/><text x="134" y="253" text-anchor="middle" class="sv-t">swan</text>
+        <text x="34" y="288" class="sv-t">Exemplars degrade first:</text>
+        <text x="34" y="308" class="sv-b">“duck” → “swan” → “bird” → “animal”</text>
+        <text x="34" y="326" class="sv-s">over 18 months (Hodges et al., 1995)</text>
+        <text x="34" y="350" class="sv-s">Sorting: superordinate outlasts specific</text>
+        <text x="34" y="364" class="sv-s">(Hodges, Patterson &amp; Tyler, 1994)</text>
+        <!-- right: features -->
+        <rect x="308" y="44" width="276" height="330" rx="14" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="322" y="68" class="sv-b">☁️ Distributed features</text>
+        <text x="322" y="84" class="sv-s">Garrard et al. (2001); McRae &amp; Cree (2002)</text>
+        <g class="sv-s">
+          <text x="400" y="112" text-anchor="middle">wing</text><text x="436" y="112" text-anchor="middle">bill</text><text x="472" y="112" text-anchor="middle">legs</text><text x="508" y="112" text-anchor="middle">fur</text><text x="546" y="112" text-anchor="middle">handle</text>
+        </g>
+        <g class="sv-t"><text x="322" y="138">duck</text><text x="322" y="166">swan</text><text x="322" y="194">robin</text><text x="322" y="222">dog</text><text x="322" y="250">cat</text><text x="322" y="278">hammer</text><text x="322" y="306">saw</text></g>
+        <g fill="#a8854a">
+          <rect x="390" y="126" width="20" height="18" rx="3"/><rect x="426" y="126" width="20" height="18" rx="3"/><rect x="462" y="126" width="20" height="18" rx="3"/>
+          <rect x="390" y="154" width="20" height="18" rx="3"/><rect x="426" y="154" width="20" height="18" rx="3"/><rect x="462" y="154" width="20" height="18" rx="3"/>
+          <rect x="390" y="182" width="20" height="18" rx="3"/><rect x="462" y="182" width="20" height="18" rx="3"/>
+        </g>
+        <g fill="#2a7f8e">
+          <rect x="462" y="210" width="20" height="18" rx="3"/><rect x="498" y="210" width="20" height="18" rx="3"/>
+          <rect x="462" y="238" width="20" height="18" rx="3"/><rect x="498" y="238" width="20" height="18" rx="3"/>
+        </g>
+        <g fill="#8a94a6"><rect x="536" y="266" width="20" height="18" rx="3"/><rect x="536" y="294" width="20" height="18" rx="3"/></g>
+        <text x="322" y="336" class="sv-t">Categories <tspan font-weight="700">emerge</tspan> from feature</text>
+        <text x="322" y="354" class="sv-t">overlap — no category labels stored</text>
+        <text x="570" y="368" text-anchor="end" class="sv-s">illustrative matrix</text>
+        <!-- bottom -->
+        <rect x="20" y="388" width="564" height="102" rx="14" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="36" y="412" class="sv-g">THE KEY RESULT THAT RECONCILES THEM</text>
+        <text x="36" y="436" class="sv-t">Rogers et al. (2002a): a connectionist network that stores only features,</text>
+        <text x="36" y="454" class="sv-t">when damaged, reproduces the hierarchical loss seen in SD —</text>
+        <text x="36" y="472" class="sv-b">without any explicit coding of a hierarchy.</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">🌳</span><b>Hierarchical view</b> (Warrington, 1975): superordinate (living vs artefact), basic (animals, tools) and exemplar levels are represented separately; exemplars degrade first.</li>
+      <li><span class="ic">⚠️</span>But categories are messier: some members are <b>more typical</b> (Rosch, 1973), membership can be <b>unclear</b>, and some categories are more <b>coherent</b> (vehicles vs household items).</li>
+      <li><span class="ic">☁️</span><b>Feature view</b>: concepts are sets of fine-grained attributes (from feature-listing studies); domains and categories emerge from similarity in feature structure.</li>
+      <li><span class="ic">🎯</span><b>Typicality</b> falls out naturally: Garrard et al. (2001) — rated prototypicality is predicted by an exemplar’s similarity to the <b>centroid</b> (average) of its category.</li>
+      <li><span class="ic">🤖</span>Rogers et al. (2002a): damage to a feature-only network reproduces SD’s hierarchical errors.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> the hierarchy is like the <i>shape of a crowd seen from a plane</i> — it looks organised into groups, but up close it is just individuals standing near people who resemble them.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “One idea is that the brain files knowledge in a tree: animal, then bird, then duck. The other is that it just stores features like ‘has wings’ and ‘has a bill’, and ducks and swans end up grouped because they share so many. The cool part is that a feature-only computer model, when damaged, loses knowledge in the same tree-like order as patients.”</div>
+  <div class="key">The specific-to-general pattern of loss in SD need not mean memory is built as a hierarchy: the hierarchy can emerge from overlapping features.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Criterion</th><th>🌳 Hierarchical (Warrington, 1975)</th><th>☁️ Distributed features</th></tr>
+    <tr><td>What is stored?</td><td style="font-weight:400">Levels: superordinate, basic, exemplar</td><td style="font-weight:400">Fine-grained features; categories emerge from similarity</td></tr>
+    <tr><td>Explains specific → general loss?</td><td style="font-weight:400">✓ Lowest level damaged first</td><td style="font-weight:400">✓ Distinctive features lost first (Rogers et al., 2002a)</td></tr>
+    <tr><td>Explains typicality?</td><td style="font-weight:400">✗ Not naturally</td><td style="font-weight:400">✓ Similarity to the category centroid (Garrard et al., 2001)</td></tr>
+    <tr><td>Unclear membership / coherence?</td><td style="font-weight:400">✗ Assumes clean categories</td><td style="font-weight:400">✓ Graded overlap</td></tr>
+    <tr><td>Feature distribution</td><td style="font-weight:400">—</td><td style="font-weight:400">Shared features more common in living than non-living domains (Devlin et al., 1998; Garrard et al., 2001; McRae &amp; Cree, 2002)</td></tr>
+  </table></div>
+  <div class="demo" id="demoCentroid">
+    <h4>🧪 Demo: typicality from the centroid (the idea behind Garrard et al., 2001)</h4>
+    <p>Each bird has a set of features <span class="bg">illustrative</span>. The <b>centroid</b> is how common each feature is across all birds. Click a bird to see how similar it is to that average — the closer, the more typical.</p>
+    <div class="chips" id="cenBirds"></div>
+    <div class="two"><div id="cenTable"></div><div id="cenOut" class="fb show">Click a bird.</div></div>
+  </div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=hierarchical+organization+semantic+memory+Warrington" target="_blank" rel="noopener">▶ Hierarchical semantic memory</a>
+    <a href="https://www.youtube.com/results?search_query=distributed+feature+based+semantic+memory+connectionist" target="_blank" rel="noopener">▶ Distributed feature models</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. What SD evidence seems to support a hierarchical organisation?</summary><p>Longitudinal naming errors (duck → swan → bird → animal; Hodges et al., 1995) and sorting tasks, where assigning items to superordinate categories outlasts finer distinctions (Hodges et al., 1994).</p></details>
+    <details><summary>2. Name three observations that call for a more complex view than a simple hierarchy.</summary><p>Some concepts are more typical than others (Rosch, 1973); membership can be unclear or overlapping; some categories are far more coherent than others (vehicles vs household items).</p></details>
+    <details><summary>3. How did Rogers et al. (2002a) reconcile the two views?</summary><p>A connectionist network trained only on features reproduced the hierarchical pattern of loss when damaged, showing the hierarchy can emerge without being explicitly coded.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 3 ============ -->
+<article class="lesson" data-emoji="🎨" data-title="Shared vs distinctive features" data-sub="The continuum that drives everything in this paper" data-part="I">
+  <div class="eyebrow">Lecture 3 of 11 · Introduction + Study 2 method · Feature distinctiveness</div>
+  <h2><span class="em">🎨</span>Shared vs distinctive features</h2>
+  <p class="sub">A duck’s wings tell you it is a bird; its green head feathers tell you it is a mallard. Which do you lose first?</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Shared to distinctive continuum">
+        <defs><linearGradient id="gSD" x1="0" x2="1"><stop offset="0" stop-color="#e7a3a3"/><stop offset=".5" stop-color="#f6eedd"/><stop offset="1" stop-color="#8fc3a1"/></linearGradient></defs>
+        <text x="20" y="30" class="sv-h">From distinctive to shared</text>
+        <text x="20" y="50" class="sv-s">Distinctiveness score = proportion of items in the category that have the feature</text>
+        <rect x="30" y="80" width="540" height="28" rx="14" fill="url(#gSD)"/>
+        <line x1="300" y1="70" x2="300" y2="120" stroke="#34466b" stroke-width="2" stroke-dasharray="5 4"/>
+        <text x="300" y="66" text-anchor="middle" class="sv-g">0.5 cut-off</text>
+        <text x="30" y="132" class="sv-b">0 · distinctive</text>
+        <text x="570" y="132" text-anchor="end" class="sv-b">shared · 1</text>
+        <!-- markers -->
+        <circle cx="70" cy="94" r="7" fill="#fff" stroke="#34466b" stroke-width="2"/>
+        <circle cx="435" cy="94" r="7" fill="#fff" stroke="#34466b" stroke-width="2"/>
+        <circle cx="545" cy="94" r="7" fill="#fff" stroke="#34466b" stroke-width="2"/>
+        <rect x="30" y="148" width="190" height="64" rx="10" fill="#f7e4e4" stroke="#e0b4b4"/>
+        <text x="42" y="170" class="sv-t">🦆 iridescent green feathers</text>
+        <text x="42" y="188" class="sv-s">only the male mallard</text>
+        <text x="42" y="204" class="sv-s">→ distinctive</text>
+        <rect x="236" y="148" width="190" height="64" rx="10" fill="#fff" stroke="#e8e1d3"/>
+        <text x="248" y="170" class="sv-t">🪽 wings on 6 of 8 birds</text>
+        <text x="248" y="188" class="sv-s">6/8 = 0.75 → shared</text>
+        <text x="248" y="204" class="sv-s">(the paper’s own example)</text>
+        <rect x="442" y="148" width="138" height="64" rx="10" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="454" y="170" class="sv-t">👀 eyes</text>
+        <text x="454" y="188" class="sv-s">most animals</text>
+        <text x="454" y="204" class="sv-s">→ shared by domain</text>
+        <!-- three classes -->
+        <text x="20" y="246" class="sv-g">THREE CLASSES IN STUDY 2</text>
+        <rect x="20" y="256" width="182" height="96" rx="12" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="32" y="278" class="sv-b">Shared-by-domain</text>
+        <text x="32" y="298" class="sv-s">&gt; half the items in ALL</text>
+        <text x="32" y="314" class="sv-s">categories of a domain</text>
+        <text x="32" y="336" class="sv-t">eyes (birds + land animals)</text>
+        <rect x="210" y="256" width="182" height="96" rx="12" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="222" y="278" class="sv-b">Shared-by-category</text>
+        <text x="222" y="298" class="sv-s">&gt; half the items in one</text>
+        <text x="222" y="314" class="sv-s">category, not the domain</text>
+        <text x="222" y="336" class="sv-t">wings (birds only)</text>
+        <rect x="400" y="256" width="182" height="96" rx="12" fill="#f7e4e4" stroke="#e0b4b4"/>
+        <text x="412" y="278" class="sv-b">Distinctive</text>
+        <text x="412" y="298" class="sv-s">everything else</text>
+        <text x="412" y="314" class="sv-s">(score below 0.5)</text>
+        <text x="412" y="336" class="sv-t">a mallard’s green head</text>
+        <!-- bars -->
+        <rect x="20" y="366" width="564" height="124" rx="14" fill="#fff" stroke="#e8e1d3"/>
+        <text x="34" y="390" class="sv-g">REAL DATA · MEAN PROPORTION OF SHARED FEATURES PER ITEM</text>
+        <text x="34" y="424" class="sv-t">🐾 animals &amp; birds</text>
+        <rect x="170" y="410" width="354" height="20" rx="6" fill="#2a7f8e"/><text x="532" y="425" class="sv-b">0.59</text>
+        <text x="34" y="462" class="sv-t">🔧 artefacts</text>
+        <rect x="170" y="448" width="174" height="20" rx="6" fill="#c9a96e"/><text x="352" y="463" class="sv-b">0.29</text>
+        <text x="570" y="484" text-anchor="end" class="sv-s">from the control drawings (Study 2)</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">📏</span>Features vary on a <b>shared ↔ distinctive continuum</b>: the green feathers of a male mallard are specific; a duck’s wings are true of most birds.</li>
+      <li><span class="ic">🧮</span>Score = proportion of items in the category that include the feature. Wings drawn on 6 of 8 birds → <b>0.75</b>.</li>
+      <li><span class="ic">🔀</span>The same feature can be shared in one category and distinctive in another: <b>“neck”</b> is shared by birds and land animals, but distinctive among artefacts (only guitar and watering can).</li>
+      <li><span class="ic">📊</span>The distribution is <b>bimodal</b> — many very shared and many very distinctive features, few in between — so a 0.5 cut-off is sensible.</li>
+      <li><span class="ic">🐾</span><b>Living things have more shared features</b> (0.59 vs 0.29 per item) — the key to explaining domain differences later.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> shared features are the <i>family surname</i> (everyone has it); distinctive features are the <i>first name</i> (only you have it). Dementia forgets first names before surnames.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “Some features belong to lots of things — nearly every animal has eyes and legs. Others belong to one thing, like a camel’s hump. The researchers measured, for each feature, how many items in the category have it, and animals turned out to have far more shared features than man-made objects.”</div>
+  <div class="key">Every feature can be scored by how many members of its category share it — and living things have many more shared features than artefacts.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Step</th><th>How distinctiveness was calculated (Study 2, following Garrard et al., 2001)</th></tr>
+    <tr><td>1</td><td style="font-weight:400">Take every feature in every control drawing</td></tr>
+    <tr><td>2</td><td style="font-weight:400">Score = proportion of items in the same semantic category that also include it (e.g., wings on 6/8 birds = 0.75), per control and per category</td></tr>
+    <tr><td>3</td><td style="font-weight:400">Average across control participants</td></tr>
+    <tr><td>4</td><td style="font-weight:400">Classify: shared-by-domain (&gt; half of items in all categories of the domain), shared-by-category (&gt; half in an intermediate category only), or distinctive (the rest)</td></tr>
+    <tr><td>5</td><td style="font-weight:400">Result: animals and birds 0.59 shared per item; artefacts 0.29 (cf. Rogers et al., 2002a)</td></tr>
+  </table></div>
+  <div class="demo" id="demoDist">
+    <h4>🧪 Demo: calculate and classify distinctiveness</h4>
+    <p><b>Part 1 — calculator.</b> A category has 8 items. How many of them include the feature?</p>
+    <input type="range" min="0" max="8" value="6" class="slider" id="distSlider" aria-label="number of items with feature">
+    <div class="fb show" id="distCalc"></div>
+    <p style="margin-top:16px"><b>Part 2 — classify.</b> Which class does each feature belong to, using the paper’s scheme?</p>
+    <div id="distQuiz"></div>
+  </div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=shared+and+distinctive+features+semantic+memory+McRae" target="_blank" rel="noopener">▶ Shared & distinctive features</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. A control drew a neck on 7 of 8 land animals but on only 2 of 24 artefacts. How is “neck” classified?</summary><p>Its score depends on the category: shared among animals (and birds), but distinctive among artefacts — exactly the paper’s point that distinctiveness is category-relative.</p></details>
+    <details><summary>2. Why does the difference in shared features between domains matter?</summary><p>If shared features survive damage and intrude, domains with more shared features (living things: 0.59 vs 0.29) will show more prototypical drawings and more intrusions — without needing a separate “living things” store.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 4 ============ -->
+<article class="lesson" data-emoji="✏️" data-title="Drawing as a test of meaning" data-sub="Why draw, and how to score a drawing objectively" data-part="I">
+  <div class="eyebrow">Lecture 4 of 11 · Introduction · Using drawing as an assessment</div>
+  <h2><span class="em">✏️</span>Drawing as a test of meaning</h2>
+  <p class="sub">A drawing is a non-verbal feature list — if you score it by content rather than by beauty.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 490" role="img" aria-label="Feature-based scoring flow">
+        <text x="20" y="30" class="sv-h">Scoring content, not artistry</text>
+        <text x="20" y="50" class="sv-s">Feature-based method (improved from Lambon Ralph et al., 1998)</text>
+        <!-- step boxes -->
+        <rect x="20" y="66" width="130" height="150" rx="12" fill="#e3ecf7" stroke="#9fb6d6"/>
+        <text x="85" y="88" text-anchor="middle" class="sv-b">① 8 controls</text>
+        <text x="85" y="104" text-anchor="middle" class="sv-s">draw each item</text>
+        <text x="85" y="150" text-anchor="middle" font-size="30">✏️🦆</text>
+        <text x="85" y="186" text-anchor="middle" class="sv-s">1 min per item,</text>
+        <text x="85" y="200" text-anchor="middle" class="sv-s">art not judged</text>
+        <line x1="152" y1="140" x2="170" y2="140" stroke="#a8854a" stroke-width="2" marker-end="url(#ah1)"/>
+        <rect x="174" y="66" width="130" height="150" rx="12" fill="#fff" stroke="#e8e1d3"/>
+        <text x="239" y="88" text-anchor="middle" class="sv-b">② List features</text>
+        <text x="239" y="104" text-anchor="middle" class="sv-s">2 independent raters</text>
+        <g class="sv-t"><text x="190" y="128">body · head</text><text x="190" y="146">2 legs</text><text x="190" y="164">webbed feet</text><text x="190" y="182">beak · wings</text></g>
+        <text x="239" y="204" text-anchor="middle" class="sv-s">the duck’s list</text>
+        <line x1="306" y1="140" x2="324" y2="140" stroke="#a8854a" stroke-width="2" marker-end="url(#ah1)"/>
+        <rect x="328" y="66" width="120" height="150" rx="12" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="388" y="88" text-anchor="middle" class="sv-b">③ Keep if</text>
+        <text x="388" y="104" text-anchor="middle" class="sv-s">drawn by</text>
+        <text x="388" y="150" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:700;fill:#a8854a">≥ 6/8</text>
+        <text x="388" y="186" text-anchor="middle" class="sv-s">controls → target</text>
+        <text x="388" y="200" text-anchor="middle" class="sv-s">features</text>
+        <line x1="450" y1="140" x2="468" y2="140" stroke="#a8854a" stroke-width="2" marker-end="url(#ah1)"/>
+        <rect x="472" y="66" width="112" height="150" rx="12" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="528" y="88" text-anchor="middle" class="sv-b">④ Score</text>
+        <text x="528" y="104" text-anchor="middle" class="sv-s">patient drawing</text>
+        <text x="528" y="146" text-anchor="middle" class="sv-t">proportion of</text>
+        <text x="528" y="164" text-anchor="middle" class="sv-t">target features</text>
+        <text x="528" y="182" text-anchor="middle" class="sv-t">present</text>
+        <!-- pros cons -->
+        <rect x="20" y="232" width="280" height="248" rx="14" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="34" y="256" class="sv-b">✅ Why drawing?</text>
+        <g class="sv-t"><text x="34" y="284">• non-verbal counterpart of</text><text x="46" y="301">feature listing</text>
+          <text x="34" y="326">• avoids anomia (no naming)</text>
+          <text x="34" y="351">• easy, no complex instructions</text>
+          <text x="34" y="376">• rich data set per item</text>
+          <text x="34" y="401">• shows fine gradations:</text><text x="46" y="418">single features lost or added</text>
+          <text x="34" y="443">• used clinically already</text><text x="46" y="460">(e.g., in the MMSE)</text></g>
+        <rect x="312" y="232" width="272" height="248" rx="14" fill="#f7e4e4" stroke="#e0b4b4"/>
+        <text x="326" y="256" class="sv-b">⚠️ Two drawbacks</text>
+        <g class="sv-t"><text x="326" y="284">1. Premorbid drawing skill</text><text x="340" y="301">varies between people</text>
+          <text x="326" y="330">2. How to score? Rating</text><text x="340" y="347">“how good is it?” is quick</text><text x="340" y="364">but confounded by skill</text><text x="340" y="381">and ignores content</text></g>
+        <text x="326" y="420" class="sv-b">→ Solution: feature scoring</text>
+        <text x="326" y="440" class="sv-s">objective, content-focused,</text>
+        <text x="326" y="456" class="sv-s">minimises drawing-skill effects</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">✏️</span>Drawing is widely used clinically (constructional apraxia, neglect, MMSE) and can be a <b>rich, sensitive test of conceptual knowledge</b>.</li>
+      <li><span class="ic">🤐</span>Unlike feature listing or definitions, it <b>avoids the problem of anomia</b> — patients don’t need words to show what they know.</li>
+      <li><span class="ic">⚠️</span>Drawbacks: different <b>premorbid drawing skills</b>, and <b>scoring</b> — “how good is this?” ratings are confounded by skill and ignore content.</li>
+      <li><span class="ic">📋</span>Solution: build a <b>feature list from control drawings</b>; a feature enters the scheme if ≥ 6 of 8 controls drew it; score = proportion present.</li>
+      <li><span class="ic">🚫</span>Items excluded: plug, barrel and alligator — controls misheard or misunderstood the names.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> feature scoring is a <i>checklist, not a beauty contest</i> — a clumsy duck with a bill, wings and webbed feet beats a lovely duck without them.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “Healthy people drew each object and the researchers listed the parts most of them included — for a duck: body, head, two legs, webbed feet, beak, wings. Then they counted how many of those parts each patient drew. That measures knowledge, not talent.”</div>
+  <div class="key">A drawing scored by the features healthy people consistently include is an objective, non-verbal measure of what a patient knows about an object.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Element</th><th>Study 1 scoring scheme</th></tr>
+    <tr><td>Controls</td><td style="font-weight:400">8 healthy adults (5 male, 3 female), aged 55–73 (mean 61.75, SD 6.54), from the MRC CBU panel</td></tr>
+    <tr><td>Items</td><td style="font-weight:400">64 Snodgrass &amp; Vanderwart (1980) items matching the semantic battery; living and man-made alternated</td></tr>
+    <tr><td>Feature list</td><td style="font-weight:400">Two independent raters (HW and JR) listed all features in the control drawings</td></tr>
+    <tr><td>Target features</td><td style="font-weight:400">Features in ≥ 6 of the 8 control drawings; the maximum score therefore varies per item</td></tr>
+    <tr><td>Reliability</td><td style="font-weight:400">Cohen’s kappa: patients κ = .42, controls κ = .48 (both p &lt; .05); the two raters’ scores were averaged</td></tr>
+    <tr><td>Limitation</td><td style="font-weight:400">This scheme counts correct features only — it could not quantify intrusions (fixed in Study 2)</td></tr>
+  </table></div>
+  <div class="demo" id="demoRater">
+    <h4>🧪 Demo: be the rater</h4>
+    <p><b>Step 1.</b> Here is how many of the 8 controls drew each duck feature <span class="bg">illustrative counts</span>. Tick the features that belong in the scoring scheme.</p>
+    <div id="raterFeats"></div>
+    <p style="margin-top:12px"><b>Step 2.</b> A patient drew: <i>a body, a head, a tail and four legs</i> (like JH’s duck in Figure 1).</p>
+    <button class="btn primary" id="raterScore">Score the patient’s drawing</button>
+    <div class="fb" id="raterOut"></div>
+  </div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=drawing+from+memory+semantic+dementia" target="_blank" rel="noopener">▶ Drawing in semantic dementia</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. Give two advantages and two drawbacks of drawing as a semantic test.</summary><p>Advantages: avoids anomia; non-verbal counterpart of feature listing; easy; rich data. Drawbacks: premorbid drawing skill varies; scoring is difficult (quality ratings are confounded by skill and ignore content).</p></details>
+    <details><summary>2. Why is the maximum score different for each item?</summary><p>Target features were those drawn by at least 6 of 8 controls, and the number of such features differs from item to item.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 5 ============ -->
+<article class="lesson" data-emoji="🧪" data-title="Study 1: who, what and how" data-sub="Six patients, 64 objects, a battery of tests" data-part="S1">
+  <div class="eyebrow">Lecture 5 of 11 · Study 1 · Method</div>
+  <h2><span class="em">🧪</span>Study 1: who, what and how</h2>
+  <p class="sub">Before reading any result, know exactly who was tested, on what, and why each test is there.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Study 1 design">
+        <text x="20" y="30" class="sv-h">Study 1 at a glance</text>
+        <!-- groups -->
+        <rect x="20" y="44" width="276" height="120" rx="14" fill="#f7e4e4" stroke="#e0b4b4"/>
+        <text x="34" y="68" class="sv-b">🧠 6 SD patients</text>
+        <text x="34" y="90" class="sv-t">DM · MB · KH · GC · JH · FM</text>
+        <text x="34" y="110" class="sv-t">2 male, 4 female · aged 57–61</text>
+        <text x="34" y="130" class="sv-s">Addenbrooke’s Memory Clinic, Cambridge</text>
+        <text x="34" y="148" class="sv-s">MRI: temporal atrophy, L &gt; R</text>
+        <rect x="308" y="44" width="276" height="120" rx="14" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="322" y="68" class="sv-b">🙂 8 healthy controls</text>
+        <text x="322" y="90" class="sv-t">5 male, 3 female · aged 55–73</text>
+        <text x="322" y="110" class="sv-t">mean 61.75 (SD 6.54)</text>
+        <text x="322" y="130" class="sv-s">MRC Cognition &amp; Brain Sciences</text>
+        <text x="322" y="148" class="sv-s">Unit participant panel</text>
+        <!-- items -->
+        <rect x="20" y="176" width="564" height="130" rx="14" fill="#fff" stroke="#e8e1d3"/>
+        <text x="34" y="200" class="sv-b">🖼️ 64 concrete items — the semantic battery (Snodgrass &amp; Vanderwart, 1980)</text>
+        <rect x="34" y="214" width="262" height="80" rx="10" fill="#e3ecf7"/>
+        <text x="46" y="236" class="sv-g">LIVING</text>
+        <text x="60" y="272" text-anchor="middle" font-size="26">🐘</text><text x="60" y="288" text-anchor="middle" class="sv-s">animals</text>
+        <text x="160" y="272" text-anchor="middle" font-size="26">🐦</text><text x="160" y="288" text-anchor="middle" class="sv-s">birds</text>
+        <text x="256" y="272" text-anchor="middle" font-size="26">🍎</text><text x="256" y="288" text-anchor="middle" class="sv-s">fruit</text>
+        <rect x="308" y="214" width="262" height="80" rx="10" fill="#f6eedd"/>
+        <text x="320" y="236" class="sv-g">ARTEFACTS</text>
+        <text x="340" y="272" text-anchor="middle" font-size="26">🏠</text><text x="340" y="288" text-anchor="middle" class="sv-s">household</text>
+        <text x="440" y="272" text-anchor="middle" font-size="26">🔨</text><text x="440" y="288" text-anchor="middle" class="sv-s">tools</text>
+        <text x="530" y="272" text-anchor="middle" font-size="26">🚗</text><text x="530" y="288" text-anchor="middle" class="sv-s">vehicles</text>
+        <!-- tests -->
+        <rect x="20" y="318" width="182" height="172" rx="14" fill="#ece6f6" stroke="#b7a6d6"/>
+        <text x="32" y="342" class="sv-b">General</text>
+        <g class="sv-t"><text x="32" y="366">MMSE</text><text x="32" y="386">letter fluency (FAS)</text><text x="32" y="406">Raven’s matrices</text><text x="32" y="426">Rey figure copy</text><text x="32" y="446">Rey immediate recall</text><text x="32" y="466">VOSP subtests</text></g>
+        <rect x="210" y="318" width="182" height="172" rx="14" fill="#f7e4e4" stroke="#e0b4b4"/>
+        <text x="222" y="342" class="sv-b">Semantic</text>
+        <g class="sv-t"><text x="222" y="366">category fluency</text><text x="222" y="386">naming (64)</text><text x="222" y="406">word–picture</text><text x="222" y="424">matching (+9 foils)</text><text x="222" y="446">Pyramids &amp; Palm</text><text x="222" y="464">Trees (words, pictures)</text></g>
+        <rect x="400" y="318" width="184" height="172" rx="14" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="412" y="342" class="sv-b">Drawing</text>
+        <g class="sv-t"><text x="412" y="366">64 items from their</text><text x="412" y="384">spoken name</text><text x="412" y="406">unlimited time</text><text x="412" y="428">living / man-made</text><text x="412" y="446">alternated</text><text x="412" y="468">fresh sheet each time</text></g>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">🧠</span><b>Six SD patients</b> seen by a neurologist, psychiatrist and neuropsychologist; depression, schizophrenia and treatable causes excluded; all met SD criteria.</li>
+      <li><span class="ic">📏</span>They span the <b>whole range of severity</b>: from mildly affected DM to severely impaired FM (MMSE 29 → 8).</li>
+      <li><span class="ic">🧩</span>The <b>general battery</b> checks what should be spared: reasoning (Raven’s), visuospatial skill and episodic memory (Rey figure), perception (VOSP).</li>
+      <li><span class="ic">🔗</span>The <b>semantic battery</b> uses the <b>same 64 items</b> across tasks, so the same concept can be compared in naming, matching and drawing.</li>
+      <li><span class="ic">🔄</span>Drawing: living and non-living items alternated and a fresh sheet each time, to minimise <b>perseveration</b> (repeating the previous drawing).</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> the same 64 items appear in every task — like giving each concept a <i>passport</i> that gets stamped in naming, matching and drawing.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “They tested six patients, from mild to severe, plus eight healthy people of similar age. Everyone did the same 64 objects in lots of tasks — naming, matching, drawing — plus tests of skills that should still be fine, like copying a complex figure.”</div>
+  <div class="key">Using the same 64 items across every task lets the researchers ask whether the same concept fails in the same way whatever the task — the test of a single central store.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Table 1</th><th>DM</th><th>MB</th><th>KH</th><th>GC</th><th>JH</th><th>FM</th><th>Controls</th></tr>
+    <tr><td>Age</td><td>61</td><td>58</td><td>57</td><td>59</td><td>58</td><td>59</td><td>61.7 (6.5)</td></tr>
+    <tr><td>Sex</td><td>M</td><td>F</td><td>M</td><td>F</td><td>F</td><td>F</td><td>5 : 3 (M : F)</td></tr>
+    <tr><td>MRI</td><td style="font-weight:400">Mild left temporal</td><td style="font-weight:400">Moderate bilateral fronto-temporal, L&gt;R</td><td style="font-weight:400">Moderate bilateral temporal, L&gt;R</td><td style="font-weight:400">Moderate bilateral temporal, L&gt;R</td><td style="font-weight:400">Moderate bilateral temporal, L&gt;R</td><td style="font-weight:400">Moderate bilateral temporal, L&gt;R</td><td>—</td></tr>
+  </table></div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Test</th><th>What it measures</th><th>Why include it?</th></tr>
+    <tr><td>MMSE</td><td style="font-weight:400">General cognitive impairment (max 30)</td><td style="font-weight:400">Overall severity</td></tr>
+    <tr><td>Letter fluency (F, A, S)</td><td style="font-weight:400">Executive function</td><td style="font-weight:400">Low scores likely reflect anomia, not executive failure</td></tr>
+    <tr><td>Raven’s matrices</td><td style="font-weight:400">Non-verbal problem solving</td><td style="font-weight:400">Should be spared</td></tr>
+    <tr><td>Rey Complex Figure</td><td style="font-weight:400">Copy = visuospatial skill; immediate recall = episodic memory</td><td style="font-weight:400">Rules out perceptual/constructional explanations</td></tr>
+    <tr><td>VOSP</td><td style="font-weight:400">Visual object &amp; space perception (incl. object decision)</td><td style="font-weight:400">Should be spared</td></tr>
+    <tr><td>Category fluency</td><td style="font-weight:400">Name exemplars of each of 6 categories in 1 min</td><td style="font-weight:400">Semantic retrieval</td></tr>
+    <tr><td>Naming / word–picture matching</td><td style="font-weight:400">Production / comprehension of the 64 items</td><td style="font-weight:400">Core semantic measures</td></tr>
+    <tr><td>Pyramids &amp; Palm Trees</td><td style="font-weight:400">Which of two items goes with the target (pyramid → palm tree or pine tree)?</td><td style="font-weight:400">Semantic association, words or pictures</td></tr>
+  </table></div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=Pyramids+and+Palm+Trees+test" target="_blank" rel="noopener">▶ Pyramids & Palm Trees test</a>
+    <a href="https://www.youtube.com/results?search_query=Rey+Osterrieth+complex+figure+test" target="_blank" rel="noopener">▶ Rey Complex Figure</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. Why did the researchers include the Rey figure and Raven’s matrices?</summary><p>To show that visuospatial/constructional skills, episodic memory and reasoning are relatively intact, so poor drawing cannot be blamed on those abilities.</p></details>
+    <details><summary>2. Why alternate living and non-living items and use a fresh sheet?</summary><p>To minimise perseveration — carrying over features from the previous drawing.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 6 ============ -->
+<article class="lesson" data-emoji="📈" data-title="Study 1: the numbers" data-sub="Poor drawings, tightly linked to naming and comprehension" data-part="S1">
+  <div class="eyebrow">Lecture 6 of 11 · Study 1 · Results</div>
+  <h2><span class="em">📈</span>Study 1: the numbers</h2>
+  <p class="sub">Meaning collapses while copying stays near normal — and drawing falls in lock-step with naming.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Dissociation line chart">
+        <text x="20" y="30" class="sv-h">Meaning falls, copying stays</text>
+        <text x="20" y="50" class="sv-s">Real data (Tables 2–3) as % of the maximum score · patients from mild to severe</text>
+        <line x1="70" y1="330" x2="470" y2="330" stroke="#6b7280"/><line x1="70" y1="80" x2="70" y2="330" stroke="#6b7280"/>
+        <g class="sv-s"><text x="62" y="334" text-anchor="end">0%</text><text x="62" y="209" text-anchor="end">50%</text><text x="62" y="84" text-anchor="end">100%</text></g>
+        <line x1="70" y1="205" x2="470" y2="205" stroke="#eee"/><line x1="70" y1="80" x2="470" y2="80" stroke="#eee"/>
+        <g id="s1Lines"></g>
+        <g class="sv-b"><text x="100" y="350" text-anchor="middle">DM</text><text x="170" y="350" text-anchor="middle">MB</text><text x="240" y="350" text-anchor="middle">KH</text><text x="310" y="350" text-anchor="middle">GC</text><text x="380" y="350" text-anchor="middle">JH</text><text x="450" y="350" text-anchor="middle">FM</text></g>
+        <text x="100" y="366" text-anchor="middle" class="sv-s">mild</text><text x="450" y="366" text-anchor="middle" class="sv-s">severe</text>
+        <!-- legend -->
+        <g><rect x="484" y="84" width="14" height="4" fill="#2f8a57"/><text x="504" y="90" class="sv-t">Rey copy</text>
+        <rect x="484" y="128" width="14" height="4" fill="#c9a96e"/><text x="504" y="134" class="sv-t">word–</text><text x="504" y="150" class="sv-t">picture</text><text x="504" y="166" class="sv-t">matching</text>
+        <rect x="484" y="198" width="14" height="4" fill="#34466b"/><text x="504" y="204" class="sv-t">naming</text></g>
+        <!-- stats band -->
+        <rect x="20" y="384" width="180" height="106" rx="12" fill="#f7e4e4" stroke="#e0b4b4"/>
+        <text x="110" y="406" text-anchor="middle" class="sv-s">target features drawn</text>
+        <text x="110" y="440" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;fill:#c0392b">53% vs 95%</text>
+        <text x="110" y="462" text-anchor="middle" class="sv-s">patients vs controls</text>
+        <text x="110" y="478" text-anchor="middle" class="sv-s">Mann–Whitney U = 1.5, p &lt; .01</text>
+        <rect x="210" y="384" width="180" height="106" rx="12" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="300" y="406" text-anchor="middle" class="sv-s">drawing × naming × matching</text>
+        <text x="300" y="440" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;fill:#a8854a">r = .96–.99</text>
+        <text x="300" y="462" text-anchor="middle" class="sv-s">Spearman, all p &lt; .001</text>
+        <text x="300" y="478" text-anchor="middle" class="sv-s">(one-tailed)</text>
+        <rect x="400" y="384" width="184" height="106" rx="12" fill="#e3ecf7" stroke="#9fb6d6"/>
+        <text x="492" y="406" text-anchor="middle" class="sv-s">familiarity (group)</text>
+        <text x="492" y="440" text-anchor="middle" style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;fill:#34466b">trend only</text>
+        <text x="492" y="462" text-anchor="middle" class="sv-s">t = 1.78, p = .07</text>
+        <text x="492" y="478" text-anchor="middle" class="sv-s">KH: man-made better, t = 5.4</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">📉</span>Patients drew far fewer target features: mean <b>0.53 (SD 0.31)</b> vs <b>0.95 (SD 0.04)</b> for controls; U = 1.5, p &lt; .01.</li>
+      <li><span class="ic">🔗</span>Drawing correlated with <b>naming</b> and <b>word–picture matching</b> at <b>r = .96–.99</b> (all p &lt; .001) → one common cause.</li>
+      <li><span class="ic">🧱</span>Meanwhile <b>Rey copy</b> and <b>Raven’s</b> stay relatively preserved until very late → the impairment is <b>selective</b>.</li>
+      <li><span class="ic">📊</span>Regression: a <b>trend</b> for better drawings of familiar items (t = 1.78, p = .07); only KH showed a domain effect (man-made better, t = 5.4, p &lt; .001).</li>
+      <li><span class="ic">📝</span>DM was mild at this stage (impaired only on Pyramids &amp; Palm Trees), but declined on all semantic tests at follow-up; his daily vocabulary practice may have helped (footnote 1).</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> three measures falling together like <i>three candles on one wick</i> — when one dims, they all dim, because they burn the same fuel: conceptual knowledge.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “Patients included about half of the key features healthy people drew. And the worse someone was at naming, the worse they drew — almost perfectly in step. But copying a complicated figure stayed near normal, so it’s their knowledge, not their hand or eye.”</div>
+  <div class="key">Drawing, naming and comprehension decline together (r = .96–.99) while copying is spared — so poor drawing reflects impoverished conceptual representations.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Table 2 · General (max)</th><th>DM</th><th>MB</th><th>KH</th><th>GC</th><th>JH</th><th>FM</th><th>Controls</th></tr>
+    <tr><td>MMSE (30)</td><td>29</td><td>22</td><td>23</td><td>25</td><td>24</td><td>8</td><td>28.8 (0.5)</td></tr>
+    <tr><td>Letter fluency (FAS)</td><td>49</td><td>16</td><td>18</td><td>16</td><td>12</td><td>1</td><td>44.2 (11.2)</td></tr>
+    <tr><td>Raven’s (percentile)</td><td>50</td><td>10</td><td>&gt;95</td><td>50</td><td>75–90</td><td>50</td><td>—</td></tr>
+    <tr><td>Rey copy (36)</td><td>34</td><td>33</td><td>33</td><td>35</td><td>36</td><td>30</td><td>34 (2.9)</td></tr>
+    <tr><td>Rey immediate recall (36)</td><td>26</td><td>13</td><td>16.5</td><td>10</td><td>9</td><td>6</td><td>18.3 (5.2)</td></tr>
+    <tr><td>VOSP object decision (20)</td><td>17</td><td>14</td><td>19</td><td>14</td><td>15</td><td>15</td><td>16.5 (3.5)</td></tr>
+    <tr><td>VOSP cube analysis (10)</td><td>10</td><td>7</td><td>10</td><td>8</td><td>10</td><td>4</td><td>9.7 (2.5)</td></tr>
+  </table><p class="sv-s">Also in Table 2: incomplete letters, dot counting, position discrimination and number location — mostly near ceiling. FM scored poorly on two VOSP subtests; MB was unexpectedly poor on Raven’s. The table prints the cube-analysis SD as “92.5)”, which looks like a typo for 2.5.</p></div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Table 3 · Semantic (max)</th><th>DM</th><th>MB</th><th>KH</th><th>GC</th><th>JH</th><th>FM</th><th>Controls</th></tr>
+    <tr><td>Category fluency — living</td><td>53</td><td>23</td><td>11</td><td>15</td><td>7</td><td>9</td><td>60.3 (12.6)</td></tr>
+    <tr><td>Category fluency — man-made</td><td>54</td><td>12</td><td>25</td><td>3</td><td>7</td><td>0</td><td>54.8 (10.3)</td></tr>
+    <tr><td>Naming (64)</td><td>61</td><td>55</td><td>49</td><td>27</td><td>10</td><td>0</td><td>62.3 (1.6)</td></tr>
+    <tr><td>Word–picture matching (64)</td><td>63</td><td>59</td><td>58</td><td>42</td><td>27</td><td>16</td><td>63.7 (0.5)</td></tr>
+    <tr><td>PPT words (52)</td><td>43</td><td>43</td><td>50</td><td>35</td><td>31</td><td>NT</td><td>51.1 (1.1)</td></tr>
+    <tr><td>PPT pictures (52)</td><td>46</td><td>42</td><td>45</td><td>35</td><td>40</td><td>34</td><td>51.2 (1.4)</td></tr>
+  </table></div>
+  <div class="demo" id="demoProfile">
+    <h4>🧪 Demo: explore a patient’s profile</h4>
+    <p>Pick a patient. Bars show each score as a % of the maximum (real data); the green tick marks the control mean. Watch how the <b>semantic</b> bars shrink with severity while the <b>non-semantic</b> bars hold up.</p>
+    <div class="chips" id="profBtns"></div>
+    <svg id="profSvg" viewBox="0 0 600 330" style="width:100%;background:#fff;border:1px solid var(--line);border-radius:14px"></svg>
+    <p class="mini" id="profNote"></p>
+  </div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=dissociation+neuropsychology+single+case+logic" target="_blank" rel="noopener">▶ Dissociation logic in neuropsychology</a>
+    <a href="https://www.youtube.com/results?search_query=Spearman+correlation+explained" target="_blank" rel="noopener">▶ Spearman correlation</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. What do the very high correlations between drawing, naming and matching imply?</summary><p>All three depend on the same thing — the integrity of central conceptual knowledge — so impairment in each arises from selective damage to that common semantic system.</p></details>
+    <details><summary>2. Why is the Rey copy data so important in Table 2?</summary><p>Copying stays near control level (30–36 of 36) even in patients who can’t name anything, so poor drawing from name can’t be due to visuospatial or motor problems.</p></details>
+    <details><summary>3. Was there a significant effect of familiarity?</summary><p>Only a trend at group level (t = 1.78, p = .07), with the same trend in DM and FM.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 7 ============ -->
+<article class="lesson" data-emoji="📦" data-title="Box-like lamps, prototypical ducks" data-sub="What the drawings looked like — and why" data-part="S1">
+  <div class="eyebrow">Lecture 7 of 11 · Study 1 · Qualitative observations & discussion</div>
+  <h2><span class="em">📦</span>Box-like lamps, prototypical ducks</h2>
+  <p class="sub">Two domains, two kinds of error — and one explanation.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Artefacts become box-like, animals become prototypical">
+        <text x="20" y="30" class="sv-h">Two domains, two error styles</text>
+        <text x="20" y="50" class="sv-s">Sketches in the spirit of Figure 1 (JH) — illustrative, not the originals</text>
+        <!-- artefact -->
+        <rect x="20" y="64" width="276" height="220" rx="14" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="34" y="88" class="sv-b">🔧 Artefacts → box-like</text>
+        <g stroke="#34466b" stroke-width="2" fill="#fff">
+          <path d="M60 130 L120 130 L108 170 L72 170 Z"/><line x1="90" y1="170" x2="90" y2="222"/><rect x="66" y="222" width="48" height="10" rx="3"/>
+        </g>
+        <text x="90" y="256" text-anchor="middle" class="sv-s">target: shade, stem, base</text>
+        <line x1="140" y1="180" x2="176" y2="180" stroke="#a8854a" stroke-width="2.5" marker-end="url(#ah1)"/>
+        <g stroke="#34466b" stroke-width="2" fill="#fff"><rect x="190" y="140" width="80" height="84" rx="6"/><line x1="190" y1="176" x2="270" y2="176"/></g>
+        <text x="230" y="256" text-anchor="middle" class="sv-s">details lost → a box</text>
+        <text x="34" y="276" class="sv-t">intrusions very rare</text>
+        <!-- living -->
+        <rect x="308" y="64" width="276" height="220" rx="14" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="322" y="88" class="sv-b">🐾 Animals → prototypical</text>
+        <g stroke="#34466b" stroke-width="2" fill="#fff">
+          <ellipse cx="370" cy="178" rx="32" ry="18"/><circle cx="400" cy="152" r="11"/><path d="M410 150 L424 153 L410 156 Z" fill="#f2c14e"/>
+          <line x1="362" y1="196" x2="362" y2="214"/><line x1="378" y1="196" x2="378" y2="214"/>
+        </g>
+        <text x="380" y="256" text-anchor="middle" class="sv-s">target: duck</text>
+        <line x1="436" y1="180" x2="466" y2="180" stroke="#a8854a" stroke-width="2.5" marker-end="url(#ah1)"/>
+        <g stroke="#34466b" stroke-width="2" fill="#fff">
+          <rect x="478" y="160" width="74" height="34" rx="14"/><circle cx="486" cy="150" r="11"/>
+          <line x1="490" y1="194" x2="490" y2="222" stroke="#c0392b"/><line x1="504" y1="194" x2="504" y2="222" stroke="#c0392b"/><line x1="526" y1="194" x2="526" y2="222" stroke="#c0392b"/><line x1="540" y1="194" x2="540" y2="222" stroke="#c0392b"/>
+          <path d="M552 170 C566 164 572 170 574 176" fill="none"/>
+        </g>
+        <text x="524" y="256" text-anchor="middle" class="sv-s">bill lost + 4 legs added</text>
+        <text x="322" y="276" class="sv-t">distinctive lost AND shared intrude</text>
+        <!-- explanation chain -->
+        <rect x="20" y="298" width="564" height="192" rx="14" fill="#fff" stroke="#e8e1d3"/>
+        <text x="34" y="322" class="sv-g">THE PROPOSED EXPLANATION (TESTED IN STUDY 2)</text>
+        <rect x="34" y="336" width="160" height="76" rx="10" fill="#e3ecf7"/>
+        <text x="114" y="358" text-anchor="middle" class="sv-t">shared features</text>
+        <text x="114" y="376" text-anchor="middle" class="sv-t">are preserved;</text>
+        <text x="114" y="394" text-anchor="middle" class="sv-t">distinctive are fragile</text>
+        <text x="206" y="380" class="sv-b">+</text>
+        <rect x="222" y="336" width="160" height="76" rx="10" fill="#e3ecf7"/>
+        <text x="302" y="358" text-anchor="middle" class="sv-t">living things have</text>
+        <text x="302" y="376" text-anchor="middle" class="sv-t">more shared</text>
+        <text x="302" y="394" text-anchor="middle" class="sv-t">features</text>
+        <line x1="388" y1="374" x2="412" y2="374" stroke="#a8854a" stroke-width="2.5" marker-end="url(#ah1)"/>
+        <rect x="416" y="336" width="156" height="76" rx="10" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="494" y="358" text-anchor="middle" class="sv-b">prototypical</text>
+        <text x="494" y="376" text-anchor="middle" class="sv-b">animals with</text>
+        <text x="494" y="394" text-anchor="middle" class="sv-b">intrusions</text>
+        <text x="34" y="440" class="sv-t">Errors are semantically related: “watering can” → hose; “kangaroo” → giraffe.</text>
+        <text x="34" y="462" class="sv-t">Cross-domain errors extremely rare (only JH and GC, long disease history).</text>
+        <text x="34" y="482" class="sv-s">Some items were refused: the patient had no idea what the name meant.</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">📦</span><b>Artefacts</b>: distinctive features lost; drawings become simpler and <b>box-like</b>; incorrect features very rarely intrude.</li>
+      <li><span class="ic">🦆</span><b>Living things</b>: distinctive features lost <i>and</i> a pull toward a familiar, <b>“prototypical”</b> animal, with wrong features added — <b>four legs on a duck</b>.</li>
+      <li><span class="ic">🎯</span>Misdrawings are <b>semantically related</b> (kangaroo → giraffe); cross-domain errors are extremely rare.</li>
+      <li><span class="ic">🔁</span>This mirrors the naming errors of SD (Hodges et al., 1995) and may reflect <b>differences in feature distribution</b> between domains (McRae &amp; Cree, 2002; Rogers et al., 2002a).</li>
+      <li><span class="ic">➡️</span>Two limits motivate Study 2: the scheme <b>couldn’t count intrusions</b>, and drawing to name <b>depends on verbal input</b>.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> when the details fade, a lamp melts into a <i>box</i> and a duck melts into a <i>generic animal</i> — each concept slides toward the average of its domain.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “When patients drew man-made things, the special parts disappeared and the objects turned into simple boxes. When they drew animals, the special parts disappeared too, but typical animal parts crept in — like a duck with four legs. Animals share lots of features, so there’s more ‘average animal’ to leak in.”</div>
+  <div class="key">Distinctive features are lost in both domains; in the living domain, widely shared features also intrude, making drawings more prototypical.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Observation</th><th>Artefacts</th><th>Living things</th></tr>
+    <tr><td>Distinctive features</td><td style="font-weight:400">Lost</td><td style="font-weight:400">Lost</td></tr>
+    <tr><td>Intrusions</td><td style="font-weight:400">Very rare</td><td style="font-weight:400">Common (four legs on a duck)</td></tr>
+    <tr><td>Resulting drawing</td><td style="font-weight:400">Simpler, box-like (JH’s lamp)</td><td style="font-weight:400">Familiar, “prototypical” animal (JH’s duck)</td></tr>
+    <tr><td>Parallel in other tasks</td><td colspan="2" style="font-weight:400">Longitudinal naming errors move toward general names (Hodges et al., 1995)</td></tr>
+  </table></div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Problem with Study 1</th><th>Fix in Study 2</th></tr>
+    <tr><td>Scoring counted only correct target features</td><td style="font-weight:400">New scheme with features + modifiers; errors coded as omissions or intrusions</td></tr>
+    <tr><td>Drawing to name needs verbal input — some items refused</td><td style="font-weight:400">Non-perceptual verbal prompts, plus two purely non-verbal tasks: immediate and delayed copying</td></tr>
+    <tr><td>Qualitative domain difference</td><td style="font-weight:400">Quantitative test of feature distinctiveness</td></tr>
+  </table></div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=category+specific+deficits+living+nonliving" target="_blank" rel="noopener">▶ Living vs non-living deficits</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. How did errors differ between artefacts and living things in Study 1?</summary><p>Both lost distinctive features; artefacts became box-like with very rare intrusions, whereas living things became more prototypical and gained incorrect shared features (e.g., four legs on a duck).</p></details>
+    <details><summary>2. What explanation do the authors propose for this domain difference?</summary><p>Shared features are more likely to be preserved and to intrude, and living things have more shared features — so living-thing drawings drift toward the prototype and show more intrusions.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 8 ============ -->
+<article class="lesson" data-emoji="🕹️" data-title="Study 2: isolating meaning" data-sub="Three drawing conditions and a clever control task" data-part="S2">
+  <div class="eyebrow">Lecture 8 of 11 · Study 2 · Method</div>
+  <h2><span class="em">🕹️</span>Study 2: isolating meaning</h2>
+  <p class="sub">Vary how much a task needs meaning — and add a task that needs none — to pin the problem on semantics.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Task by cognitive system matrix">
+        <text x="20" y="30" class="sv-h">Which systems does each task need?</text>
+        <text x="20" y="50" class="sv-s">The logic of Study 2’s design</text>
+        <rect x="20" y="64" width="564" height="300" rx="14" fill="#fff" stroke="#e8e1d3"/>
+        <g class="sv-b"><text x="330" y="94" text-anchor="middle">👁️ vision</text><text x="330" y="110" text-anchor="middle">+ praxis</text>
+          <text x="434" y="94" text-anchor="middle">🖼️ visual</text><text x="434" y="110" text-anchor="middle">episodic</text>
+          <text x="530" y="94" text-anchor="middle">📖 semantic</text><text x="530" y="110" text-anchor="middle">memory</text></g>
+        <line x1="34" y1="122" x2="570" y2="122" stroke="#e8e1d3"/>
+        <g class="sv-t">
+          <text x="34" y="154" font-weight="700">① Immediate copy</text><text x="34" y="172" class="sv-s">picture in view</text>
+          <text x="34" y="214" font-weight="700">② Delayed copy</text><text x="34" y="232" class="sv-s">count to 15 (≈10 s)</text>
+          <text x="34" y="274" font-weight="700">③ Drawing to name</text><text x="34" y="292" class="sv-s">+ non-perceptual prompts</text>
+          <text x="34" y="334" font-weight="700">④ Delayed copy of shapes</text><text x="34" y="352" class="sv-s">meaningless figures</text>
+        </g>
+        <g font-size="20" text-anchor="middle">
+          <text x="330" y="166">✅</text>
+          <text x="330" y="226">✅</text><text x="434" y="226">✅</text><text x="530" y="226">✅</text>
+          <text x="330" y="286">✅</text><text x="530" y="286">✅✅</text>
+          <text x="330" y="346">✅</text><text x="434" y="346">✅</text>
+        </g>
+        <line x1="34" y1="310" x2="570" y2="310" stroke="#e8e1d3" stroke-dasharray="4 4"/>
+        <!-- predictions -->
+        <rect x="20" y="378" width="564" height="112" rx="14" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="34" y="402" class="sv-g">PREDICTION IF THE DEFICIT IS SEMANTIC</text>
+        <text x="34" y="428" class="sv-t">① best  &gt;  ② worse  &gt;  ③ worst — tracking reliance on meaning;</text>
+        <text x="34" y="448" class="sv-t">the gaps should widen with severity (DS &lt; DC &lt; IF);</text>
+        <text x="34" y="468" class="sv-t">and ④ should be normal, because shapes have almost no meaning.</text>
+        <text x="570" y="484" text-anchor="end" class="sv-s">if it were episodic, ④ would fail too</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">👥</span><b>Three new SD patients</b> — DS (mild, 69), DC (moderate, 77), IF (severe, 66) — and 4 matched controls.</li>
+      <li><span class="ic">🕹️</span><b>Three conditions</b> on separate occasions: immediate copy, delayed copy (≈10 s filled delay) and drawing to name.</li>
+      <li><span class="ic">⏱️</span>The 10 s delay came from <b>pilot testing</b> with DS: after just 10 s, his poor conceptual knowledge already affected his copies.</li>
+      <li><span class="ic">💬</span>If a name meant nothing, a <b>non-perceptual prompt</b> was given (“a bird that swims on ponds, waddles on land and lays eggs”) — never “it has a beak”.</li>
+      <li><span class="ic">🔺</span><b>Control task</b>: delayed copying of geometric shapes (3–8 features) — almost no semantic content, so they test visual episodic memory alone.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> the three conditions are a <i>dimmer switch for meaning</i> — immediate copy (lights off), delayed copy (half on), drawing to name (full on) — and the shapes are the <i>control bulb</i> with no meaning at all.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “They made patients draw the same objects three ways: copying with the picture in front of them, copying after it was taken away for 10 seconds, and drawing from just the name. Each step needs more knowledge. They also had them copy meaningless shapes after a delay — if that was fine, then the problem really is meaning, not memory for pictures.”</div>
+  <div class="key">By grading how much each task relies on meaning — and adding a meaningless control — Study 2 can attribute drawing errors to semantic memory rather than to perception or episodic memory.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="two">
+    <div class="tbl-wrap"><table>
+      <tr><th>Tables 4–6</th><th>DS</th><th>DC</th><th>IF</th><th>Controls</th></tr>
+      <tr><td>Age</td><td>69</td><td>77</td><td>66</td><td>65.5 (9.5)</td></tr>
+      <tr><td>Sex</td><td>M</td><td>F</td><td>M</td><td>2 : 2</td></tr>
+      <tr><td>MRI</td><td style="font-weight:400">mild bilateral fronto-temporal</td><td style="font-weight:400">moderate temporal</td><td style="font-weight:400">marked bilateral temporal</td><td>—</td></tr>
+      <tr><td>MMSE (30)</td><td>23</td><td>18</td><td>11</td><td>28.8</td></tr>
+      <tr><td>Digit span fwd / bwd</td><td>6 / 4</td><td>7 / 2</td><td>5 / 5</td><td>6.8 / 4.7</td></tr>
+      <tr><td>Rey copy (36)</td><td>35</td><td>32</td><td>26</td><td>34</td></tr>
+      <tr><td>Naming (64)</td><td>17</td><td>11</td><td>1</td><td>62.3</td></tr>
+      <tr><td>Word–picture (64)</td><td>58</td><td>36</td><td>18</td><td>63.7</td></tr>
+      <tr><td>Synonyms concrete (25)</td><td>12*</td><td>14*</td><td>13*</td><td>23.7</td></tr>
+      <tr><td>PPT pictures (52)</td><td>46</td><td>36</td><td>22*</td><td>51.2</td></tr>
+    </table><p class="sv-s">* not significantly better than chance. All three patients: severely reduced category fluency and profound anomia.</p></div>
+    <div class="tbl-wrap"><table>
+      <tr><th>Scoring element</th><th>Detail</th></tr>
+      <tr><td>Features</td><td style="font-weight:400">Raters (SB, TR) listed features in control copies (duck: body, head, 2 legs, 2 wings, beak, 2 eyes, short feathered tail, webbed feet); features drawn by only one control dropped</td></tr>
+      <tr><td>Visual features</td><td style="font-weight:400">Similar-looking parts coded as one feature across items: the neck of a duck = the neck of a camel = the spout of a watering can</td></tr>
+      <tr><td>Modifiers</td><td style="font-weight:400">Neck: curved / thin / long / short. Swan: long, thin, curved. Camel: long, curved (not thin)</td></tr>
+      <tr><td>Target set</td><td style="font-weight:400">Only features drawn by <b>all</b> controls</td></tr>
+      <tr><td>Error codes</td><td style="font-weight:400"><b>Correct</b> (two legs on a duck) · <b>omission</b> (no beak) · <b>intrusion</b> (four legs)</td></tr>
+      <tr><td>Excluded</td><td style="font-weight:400">Fruit — IF didn’t draw all eight fruit</td></tr>
+    </table></div>
+  </div>
+  <div class="demo" id="demoKO">
+    <h4>🧪 Demo: knock out a system</h4>
+    <p>Click a system to “damage” it. The bars predict performance on the four tasks. Which damage pattern matches what SD patients actually did?</p>
+    <div class="syscol" id="koSys"></div>
+    <svg id="koSvg" viewBox="0 0 600 250" style="width:100%;background:#fff;border:1px solid var(--line);border-radius:14px"></svg>
+    <div class="fb show" id="koOut"></div>
+  </div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=semantic+memory+vs+episodic+memory" target="_blank" rel="noopener">▶ Semantic vs episodic memory</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. Why were prompts “non-perceptual”?</summary><p>So they wouldn’t give away visual features (beak, wings). Otherwise the drawing would reflect the prompt rather than the patient’s own knowledge.</p></details>
+    <details><summary>2. What does delayed copying recruit that immediate copying does not?</summary><p>Visual episodic memory and semantic memory. The geometric-shape condition isolates the episodic part, because shapes carry almost no meaning.</p></details>
+    <details><summary>3. Why was a 10-second delay chosen?</summary><p>Pilot testing with DS (delays from 10 s to 1 min) showed that already after 10 s his poor conceptual knowledge began to influence his copies.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 9 ============ -->
+<article class="lesson" data-emoji="📊" data-title="Study 2: task, severity and domain" data-sub="More meaning needed, more errors — and the animal puzzle" data-part="S2">
+  <div class="eyebrow">Lecture 9 of 11 · Study 2 · Results (1)</div>
+  <h2><span class="em">📊</span>Study 2: task, severity and domain</h2>
+  <p class="sub">Every prediction from the design came true — plus one puzzle about animals.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Mean errors per item by task and patient">
+        <text x="20" y="30" class="sv-h">Errors grow with meaning and severity</text>
+        <text x="20" y="50" class="sv-s">Mean errors per item (omissions + intrusions) · ≈ read from Figure 3</text>
+        <line x1="60" y1="380" x2="580" y2="380" stroke="#6b7280"/><line x1="60" y1="80" x2="60" y2="380" stroke="#6b7280"/>
+        <g class="sv-s"><text x="52" y="384" text-anchor="end">0</text><text x="52" y="298" text-anchor="end">4</text><text x="52" y="212" text-anchor="end">8</text><text x="52" y="126" text-anchor="end">12</text></g>
+        <line x1="60" y1="294" x2="580" y2="294" stroke="#eee"/><line x1="60" y1="208" x2="580" y2="208" stroke="#eee"/><line x1="60" y1="122" x2="580" y2="122" stroke="#eee"/>
+        <g id="f3Bars"></g>
+        <g class="sv-b"><text x="145" y="402" text-anchor="middle">Immediate copy</text><text x="320" y="402" text-anchor="middle">Delayed copy</text><text x="495" y="402" text-anchor="middle">From name</text></g>
+        <rect x="370" y="86" width="12" height="12" fill="#bcd3ea"/><text x="388" y="97" class="sv-s">DS (mild)</text>
+        <rect x="450" y="86" width="12" height="12" fill="#7fa6d9"/><text x="468" y="97" class="sv-s">DC (moderate)</text>
+        <rect x="370" y="106" width="12" height="12" fill="#34466b"/><text x="388" y="117" class="sv-s">IF (severe)</text>
+        <rect x="20" y="420" width="564" height="70" rx="12" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="34" y="444" class="sv-t">Task F(2, 425) = 96.5 · patient F(2, 425) = 49.5 · task × patient F(4, 425) = 8.55</text>
+        <text x="34" y="466" class="sv-t">all p &lt; .001 · immediate &gt; delayed &gt; name; DS &lt; DC &lt; IF in errors</text>
+        <text x="34" y="482" class="sv-s">Bonferroni-corrected pairwise comparisons</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">🎯</span><b>Task</b>: immediate copy best, delayed copy worse, drawing to name worst — exactly tracking the reliance on conceptual knowledge.</li>
+      <li><span class="ic">📈</span><b>Severity</b>: DC made more errors than DS, IF more than DC (all p &lt; .001).</li>
+      <li><span class="ic">✖️</span><b>Interaction</b>: the gaps between tasks <b>widen</b> with semantic impairment — immediate copying barely changes, the other two collapse.</li>
+      <li><span class="ic">🕳️</span><b>Omissions</b>: effects of patient and task, but <b>no effect of domain</b> (F(1, 433) = 1.63, n.s.).</li>
+      <li><span class="ic">➕</span><b>Intrusions</b>: effects of patient, task <b>and domain</b> — more intrusions for animals (F(1, 433) = 55.6, p &lt; .001), mainly in delayed copy and drawing to name.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> immediate copying is a <i>flat line</i>, the other two are <i>staircases</i> — the more a task needs meaning, the steeper the stairs as the disease advances.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “Copying with the picture in view stayed almost perfect, even in the worst patient. But copying from memory, and especially drawing from a name, got much worse as the disease got worse. Animals also got more wrong features added than objects did — which needs explaining.”</div>
+  <div class="key">Drawing accuracy depends on how much a task relies on conceptual knowledge and on how degraded that knowledge is — not on the ability to see or draw.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Measure</th><th>Patient</th><th>Task</th><th>Domain</th><th>Key interaction</th></tr>
+    <tr><td>Total errors</td><td style="font-weight:400">F(2,425) = 49.5 ***</td><td style="font-weight:400">F(2,425) = 96.5 ***</td><td style="font-weight:400">—</td><td style="font-weight:400">Task × patient F(4,425) = 8.55 ***</td></tr>
+    <tr><td>Omissions (Fig. 4)</td><td style="font-weight:400">F(2,433) = 62.71 ***</td><td style="font-weight:400">F(2,433) = 129.41 ***</td><td style="font-weight:400">F(1,433) = 1.63, n.s.</td><td style="font-weight:400">Task × patient F(4,433) = 12.07 ***</td></tr>
+    <tr><td>Intrusions (Fig. 5)</td><td style="font-weight:400">F(2,433) = 30.64 ***</td><td style="font-weight:400">F(2,433) = 54.72 ***</td><td style="font-weight:400">F(1,433) = 55.6 *** (animals &gt; artefacts)</td><td style="font-weight:400">Domain × task F(2,433) = 14.8 ***; patient × task F(4,433) = 6.52 ***</td></tr>
+  </table><p class="sv-s">*** p &lt; .001. Omissions: name &gt; delayed &gt; immediate; IF &lt; DC &lt; DS in target features. Intrusions: name and delayed &gt; immediate, name vs delayed n.s.; IF &gt; DC &gt; DS. The text reports the domain effect for intrusions as both F(2, 433) = 55.65 and F(1, 433) = 55.6.</p></div>
+  <div class="debate">🔎 <b>Reading tip:</b> in the original, the y-axes of Figures 4 and 6 are labelled “rate of intrusions”, but their captions say they show <b>misses (omissions)</b>. Trust the captions. Also note the very different scales: omission rates go up to about .6, intrusion rates to about .02, because intrusions are divided by the huge number of features that <i>could</i> have been added.</div>
+  <div class="demo" id="demoFig">
+    <h4>🧪 Demo: explore Figures 4 and 5 — where does domain matter?</h4>
+    <p>Switch between omissions and intrusions, and between the three conditions. Values are ≈ read from the figures.</p>
+    <div class="seg" id="figMeasure"></div>
+    <div class="seg" id="figCond"></div>
+    <svg id="figSvg" viewBox="0 0 600 280" style="width:100%;background:#fff;border:1px solid var(--line);border-radius:14px"></svg>
+    <div class="fb show" id="figOut"></div>
+  </div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=interaction+effect+ANOVA+explained" target="_blank" rel="noopener">▶ Interaction effects in ANOVA</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. Describe the task × patient interaction and what it means.</summary><p>The differences between tasks grew with severity: immediate copying stayed good for all patients, but delayed copying and drawing to name deteriorated as semantic impairment increased — showing the tasks differ in their reliance on semantic knowledge.</p></details>
+    <details><summary>2. Which error type showed a domain effect?</summary><p>Intrusions (more for animals), not omissions. The domain effect was also tied to task: tiny in immediate copying, larger in the other two conditions.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 10 ============ -->
+<article class="lesson" data-emoji="🦆" data-title="Distinctiveness solves the puzzle" data-sub="What is omitted, what intrudes — and why animals look special" data-part="S2">
+  <div class="eyebrow">Lecture 10 of 11 · Study 2 · Results (2)</div>
+  <h2><span class="em">🦆</span>Distinctiveness solves the puzzle</h2>
+  <p class="sub">Distinctive features go first; domain-wide features stay and spill over. Add that to the analysis and the “animal effect” vanishes.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Omissions and intrusions by distinctiveness">
+        <text x="20" y="30" class="sv-h">Mirror images: lost vs added</text>
+        <text x="20" y="50" class="sv-s">Drawing from name · rate per feature class · ≈ read from Figures 6c and 7c</text>
+        <text x="34" y="80" class="sv-b">OMISSIONS (Fig. 6c)</text>
+        <text x="330" y="80" class="sv-b">INTRUSIONS (Fig. 7c)</text>
+        <line x1="34" y1="320" x2="280" y2="320" stroke="#6b7280"/><line x1="330" y1="320" x2="576" y2="320" stroke="#6b7280"/>
+        <g id="f67Bars"></g>
+        <g class="sv-s"><text x="74" y="338" text-anchor="middle">DS</text><text x="157" y="338" text-anchor="middle">DC</text><text x="240" y="338" text-anchor="middle">IF</text>
+          <text x="370" y="338" text-anchor="middle">DS</text><text x="453" y="338" text-anchor="middle">DC</text><text x="536" y="338" text-anchor="middle">IF</text></g>
+        <rect x="34" y="352" width="12" height="12" fill="#8fc3a1"/><text x="52" y="363" class="sv-s">shared-by-domain</text>
+        <rect x="170" y="352" width="12" height="12" fill="#e3cfa7"/><text x="188" y="363" class="sv-s">shared-by-category</text>
+        <rect x="320" y="352" width="12" height="12" fill="#c0392b"/><text x="338" y="363" class="sv-s">distinctive</text>
+        <rect x="20" y="380" width="564" height="110" rx="14" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="34" y="404" class="sv-g">THE PUZZLE SOLVED</text>
+        <text x="34" y="428" class="sv-t">Animals: 0.59 shared features per item · artefacts: 0.29</text>
+        <text x="34" y="448" class="sv-t">→ more shared features available to intrude into animal drawings.</text>
+        <text x="34" y="472" class="sv-b">With distinctiveness in the ANOVA, domain is n.s.: F(1, 33) = 2.94, p &gt; .1</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">🕳️</span><b>Omissions</b>: distinctive &gt; shared-by-category &gt; shared-by-domain (F(2, 222) = 186.23, p &lt; .001). Distinctive vs shared: F = 311.5; category vs domain: F = 53.4.</li>
+      <li><span class="ic">➕</span><b>Intrusions</b>: shared-by-domain &gt; shared-by-category &gt; distinctive (F(2, 32) = 19.12, p &lt; .001) — intruders come from the domain’s common pool.</li>
+      <li><span class="ic">📶</span>The distinctiveness effect is <b>small in immediate copying</b> and large in the two memory-based conditions; it is strongest in IF (most severe).</li>
+      <li><span class="ic">🐾</span>The <b>animal &gt; artefact intrusion effect disappears</b> once distinctiveness is included: one common cause in both domains.</li>
+      <li><span class="ic">🔺</span><b>Geometric shapes</b>: patients within the control range; only at the low end for the most complex shapes (16.7 vs 22.0).</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> the duck’s <i>first name</i> (bill, webbed feet) is forgotten; its <i>family name</i> (“animal”: legs, eyes) survives — and gets written on the wrong family member.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “The features patients leave out are the special ones that make an object unique. The features they wrongly add are the ones almost every animal has, like four legs. Animals just have more of those common features than objects do, which is why animals seemed worse — it isn’t a special ‘animal’ problem.”</div>
+  <div class="key">Omissions and intrusions are two sides of one coin: distinctive features are lost first, and domain-wide shared features intrude — which fully explains the apparent animal–artefact difference.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Effect</th><th>Omissions</th><th>Intrusions</th></tr>
+    <tr><td>Distinctiveness (main)</td><td style="font-weight:400">F(2, 222) = 186.23 ***</td><td style="font-weight:400">F(2, 32) = 19.12 ***</td></tr>
+    <tr><td>Ordering</td><td style="font-weight:400">distinctive &gt; category-shared &gt; domain-shared</td><td style="font-weight:400">domain-shared &gt; category-shared (p &lt; .001) &gt; distinctive (p &lt; .05)</td></tr>
+    <tr><td>× Patient</td><td style="font-weight:400">F(4, 442) = 3.41 ** (IF shows the largest gaps)</td><td style="font-weight:400">n.s.</td></tr>
+    <tr><td>× Task</td><td style="font-weight:400">F(4, 442) = 14.52 *** (small in immediate copy)</td><td style="font-weight:400">F(2, 33) = 4.90 * (attenuated in immediate copy)</td></tr>
+    <tr><td>× Domain</td><td style="font-weight:400">F(2, 221) = 3.88 * — for category-shared features, more omitted for animals</td><td style="font-weight:400">Domain n.s.: F(1, 33) = 2.94, p &gt; .1</td></tr>
+    <tr><td>Domain (main)</td><td style="font-weight:400">n.s.</td><td style="font-weight:400">n.s. once distinctiveness is included</td></tr>
+  </table></div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Table 7 · delayed copy of geometric shapes</th><th>N</th><th>Easy (3–4 features)</th><th>Moderate (5–6)</th><th>Difficult (7–8)</th></tr>
+    <tr><td>Patients</td><td>3</td><td>7–9 (8)</td><td>9–11 (9.7)</td><td>16–17 (16.7)</td></tr>
+    <tr><td>Controls</td><td>4</td><td>7–9 (8.5)</td><td>9–13 (11.2)</td><td>16–27 (22.0)</td></tr>
+  </table><p class="sv-s">Range (mean) of features remembered. 1 point per feature; 3 easy, 3 moderate and 4 difficult designs. The paper refers to an Appendix A with example shapes, but it is not included in the PDF you uploaded.</p></div>
+  <div class="demo" id="demoSlider">
+    <h4>🧪 Demo: watch a duck erode</h4>
+    <p>Move the slider to increase semantic impairment <span class="bg">illustrative</span>. Features disappear in the order the paper found — distinctive first, then category-shared — while domain-wide features stay and intrude.</p>
+    <input type="range" min="0" max="4" value="0" step="1" class="slider" id="duckSlider" aria-label="severity">
+    <div class="two">
+      <svg id="duckSvg" viewBox="0 0 300 220" style="width:100%;background:#fff;border:1px solid var(--line);border-radius:14px"></svg>
+      <div class="fb show" id="duckOut"></div>
+    </div>
+  </div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=semantic+dementia+distinctive+features+lost+first" target="_blank" rel="noopener">▶ Distinctive features in SD</a>
+    <a href="https://www.youtube.com/results?search_query=Rogers+McClelland+semantic+cognition+model" target="_blank" rel="noopener">▶ Rogers & McClelland: semantic cognition</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. Which features are most often omitted, and which most often intrude?</summary><p>Distinctive features are omitted most; features shared across the whole domain intrude most.</p></details>
+    <details><summary>2. Explain why the domain effect on intrusions disappeared.</summary><p>Animals have more shared features (0.59 vs 0.29 per item). Since shared features are what intrude, animals show more intrusions. Once distinctiveness is entered as a predictor, domain adds nothing: both domains follow the same rule.</p></details>
+    <details><summary>3. What does the geometric-shape result rule out?</summary><p>An episodic (visual) memory explanation of poor delayed copying: with meaningless shapes, patients performed within the control range.</p></details>
+  </div>
+  <div class="lnav"></div>
+</article>
+
+<!-- ============ LECTURE 11 ============ -->
+<article class="lesson" data-emoji="🏛️" data-title="What SD teaches about semantic memory" data-sub="One amodal, distributed system — and the rival view" data-part="D">
+  <div class="eyebrow">Lecture 11 of 11 · General discussion</div>
+  <h2><span class="em">🏛️</span>What SD teaches about semantic memory</h2>
+  <p class="sub">The authors’ conclusion, the alternative they cannot rule out, and why they prefer theirs.</p>
+  <div class="lgrid">
+    <figure class="diagram">
+      <svg viewBox="0 0 600 500" role="img" aria-label="Competing accounts of drawing impairment">
+        <text x="20" y="30" class="sv-h">Why do SD patients draw poorly?</text>
+        <!-- rival -->
+        <rect x="20" y="44" width="276" height="250" rx="14" fill="#f7e4e4" stroke="#e0b4b4"/>
+        <text x="34" y="68" class="sv-b">Rival: separate systems</text>
+        <text x="34" y="84" class="sv-s">Riddoch et al. (1988)</text>
+        <rect x="44" y="104" width="112" height="54" rx="10" fill="#fff" stroke="#34466b"/>
+        <text x="100" y="126" text-anchor="middle" class="sv-t">semantic</text><text x="100" y="144" text-anchor="middle" class="sv-t">system ❌</text>
+        <rect x="170" y="104" width="112" height="54" rx="10" fill="#fff" stroke="#34466b"/>
+        <text x="226" y="126" text-anchor="middle" class="sv-t">structural</text><text x="226" y="144" text-anchor="middle" class="sv-t">description ❌?</text>
+        <line x1="226" y1="160" x2="226" y2="200" stroke="#34466b" stroke-width="2" marker-end="url(#ahN)"/>
+        <rect x="170" y="204" width="112" height="34" rx="10" fill="#fff" stroke="#34466b"/><text x="226" y="226" text-anchor="middle" class="sv-t">drawing</text>
+        <text x="34" y="262" class="sv-t">poor drawing = extra damage to</text>
+        <text x="34" y="280" class="sv-t">an independent visual store</text>
+        <!-- preferred -->
+        <rect x="308" y="44" width="276" height="250" rx="14" fill="#e2f1e6" stroke="#a9d3b7"/>
+        <text x="322" y="68" class="sv-b">Preferred: interactive</text>
+        <text x="322" y="84" class="sv-s">cf. Humphreys &amp; Forde (2001)</text>
+        <rect x="326" y="104" width="100" height="54" rx="10" fill="#fff" stroke="#34466b"/>
+        <text x="376" y="126" text-anchor="middle" class="sv-t">semantic</text><text x="376" y="144" text-anchor="middle" class="sv-t">system ❌</text>
+        <rect x="474" y="104" width="100" height="54" rx="10" fill="#fff" stroke="#34466b"/>
+        <text x="524" y="126" text-anchor="middle" class="sv-t">visual–</text><text x="524" y="144" text-anchor="middle" class="sv-t">structural</text>
+        <line x1="430" y1="120" x2="466" y2="120" stroke="#2f8a57" stroke-width="2" marker-end="url(#ah1)"/>
+        <line x1="470" y1="142" x2="434" y2="142" stroke="#c0392b" stroke-width="2" stroke-dasharray="4 3" marker-end="url(#ahR)"/>
+        <text x="450" y="176" text-anchor="middle" class="sv-s">feedback</text>
+        <line x1="524" y1="160" x2="524" y2="200" stroke="#34466b" stroke-width="2" marker-end="url(#ahN)"/>
+        <rect x="468" y="204" width="112" height="34" rx="10" fill="#fff" stroke="#34466b"/><text x="524" y="226" text-anchor="middle" class="sv-t">drawing</text>
+        <text x="322" y="262" class="sv-t">visual representations depend on</text>
+        <text x="322" y="280" class="sv-t">feedback from conceptual knowledge</text>
+        <!-- arguments -->
+        <rect x="20" y="308" width="564" height="182" rx="14" fill="#f6eedd" stroke="#c9a96e"/>
+        <text x="34" y="332" class="sv-g">WHY THE AUTHORS PREFER THE INTERACTIVE, UNITARY ACCOUNT</text>
+        <text x="34" y="358" class="sv-t">1. If a separate visual store were damaged, why would drawing correlate</text>
+        <text x="50" y="376" class="sv-t">so strongly (r = .96–.99) with verbal semantic tasks?</text>
+        <text x="34" y="402" class="sv-t">2. Why would distinctive visual features be more vulnerable than shared ones —</text>
+        <text x="50" y="420" class="sv-t">exactly the pattern seen in naming, definitions and sorting?</text>
+        <text x="34" y="446" class="sv-t">3. Object decision is good, but consistent with feedback accounts</text>
+        <text x="50" y="464" class="sv-t">(Rogers et al., 2002a, 2002b).</text>
+        <text x="570" y="484" text-anchor="end" class="sv-s">“Nothing in the current data can refute this interpretation.”</text>
+      </svg>
+    </figure>
+    <ul class="points">
+      <li><span class="ic">🌐</span><b>Unitary amodal system</b>: SD reflects degradation of one semantic system — “unitary (but very distributed)” — that every task draws on.</li>
+      <li><span class="ic">🔗</span><b>Consistency of performance</b>: drawing, naming and matching correlate highly; non-semantic tasks (immediate copy, shapes, Rey) are spared → a common cause.</li>
+      <li><span class="ic">🔁</span><b>Consistency of errors</b>: omitting specific properties while keeping domain-wide ones is also seen in naming, definitions and sorting; four-legged ducks parallel <b>over-extended names</b> of typical items (Hodges et al., 1995).</li>
+      <li><span class="ic">⚖️</span><b>Rival view</b>: a separate structural description system (Riddoch et al., 1988). Not refuted — but the authors prefer an <b>interactive</b> account.</li>
+      <li><span class="ic">✏️</span><b>Drawing as assessment</b>: no method is superior — drawing says nothing about use or location, but shows fine gradations and, with delayed copying, needs no verbal input or output.</li>
+    </ul>
+  </div>
+  <div class="hook">🪝 <b>Memory hook:</b> the four-legged duck and the patient who calls every animal by one familiar name are <i>the same error in two languages</i> — pictures and words — because they come from one store.</div>
+  <div class="friend">🗣️ <b>Explain it to a friend:</b> “All the evidence points to one big, spread-out knowledge network that naming, understanding and drawing all rely on. When it degrades, the details go and the generic stuff remains — in words and in pictures alike. Some people think there’s a separate store for what things look like, and the authors can’t fully rule that out, but it wouldn’t explain why drawing tracks naming so closely.”</div>
+  <div class="key">SD arises from degradation of a unitary, amodal but highly distributed conceptual network, in which visual knowledge depends on — and fails with — semantic knowledge.</div>
+  <h3>📊 Tables & studies</h3>
+  <div class="tbl-wrap"><table>
+    <tr><th>Lesson from SD</th><th>Evidence in this paper</th></tr>
+    <tr><td>1. One amodal semantic system</td><td style="font-weight:400">r = .96–.99 across drawing, naming and matching; same error patterns in verbal and non-verbal tasks</td></tr>
+    <tr><td>2. Selective and dissociable</td><td style="font-weight:400">Good immediate copying, geometric-shape recall, Rey copy, Raven’s, digit span</td></tr>
+    <tr><td>3. Distributed features, not labels</td><td style="font-weight:400">Errors are feature omissions and intrusions; categories emerge from feature overlap</td></tr>
+    <tr><td>4. Shared robust, distinctive fragile</td><td style="font-weight:400">Omissions: distinctive &gt; category-shared &gt; domain-shared</td></tr>
+    <tr><td>5. Drift toward the prototype</td><td style="font-weight:400">Domain-shared intrusions; over-extension of names and visual properties</td></tr>
+    <tr><td>6. No separate “living things” store needed</td><td style="font-weight:400">Domain effect vanishes when distinctiveness is controlled (Devlin et al., 1998; Moss et al., 1998)</td></tr>
+  </table></div>
+  <div class="tbl-wrap"><table>
+    <tr><th>Assessment method</th><th>Strengths</th><th>Limits</th></tr>
+    <tr><td>Drawing / delayed copying</td><td style="font-weight:400">Fine gradations (single features omitted or added); delayed copying has no verbal input or output; quick; rich data</td><td style="font-weight:400">Nothing about how an object is used or where it is found; premorbid skill varies</td></tr>
+    <tr><td>Naming / comprehension</td><td style="font-weight:400">Standard, efficient</td><td style="font-weight:400">Force a single label, restricting responses and forcing categorisation</td></tr>
+  </table></div>
+  <div class="debate">⚖️ <b>Still open:</b> the authors state that “nothing in the current data can refute” the separate structural-description account. Their preference rests on parsimony and on the parallel error patterns — a good example of evaluating competing explanations rather than proving one.</div>
+  <div class="watch">🎬 <b>Watch:</b>
+    <a href="https://www.youtube.com/results?search_query=hub+and+spoke+model+semantic+memory+anterior+temporal+lobe" target="_blank" rel="noopener">▶ Hub-and-spoke model</a>
+    <a href="https://www.youtube.com/results?search_query=structural+description+system+object+recognition+agnosia" target="_blank" rel="noopener">▶ Structural descriptions & object recognition</a>
+  </div>
+  <div class="check"><h3>🧩 Comprehension Check</h3>
+    <details><summary>1. Exam-style: what can we learn from semantic dementia about semantic memory?</summary><p>(1) Semantic memory is a unitary, amodal system: drawing, naming and matching decline together (r = .96–.99). (2) It dissociates from perception, praxis and episodic memory: copying and geometric-shape recall are normal. (3) Concepts are distributed feature patterns: distinctive features are lost first and domain-shared features intrude (the four-legged duck), so the hierarchy seen in SD emerges from feature overlap. (4) Apparent category-specific effects can arise from feature distribution.</p></details>
+    <details><summary>2. What is the rival account, and why do the authors reject it?</summary><p>That visual/structural knowledge sits in an independent structural description system, damaged in addition to semantics. It is not refuted, but it can’t explain why drawing correlates so strongly with verbal tasks or why distinctive visual features are especially vulnerable. The authors prefer an interactive account in which visual representations depend on semantic feedback.</p></details>
+  </div>
+  <div class="card" style="background:var(--pgold);border-color:var(--gold)">
+    <h3 style="margin-top:0">🧵 Synthesis</h3>
+    <p id="synth2"></p>
+  </div>
+  <div class="lnav"></div>
+</article>
+</section>
+
+<!-- ================= FLASHCARDS ================= -->
+<section class="panel" id="flash">
+  <div class="eyebrow">Active recall</div>
+  <h1>🃏 Flashcards</h1>
+  <p class="sub">Say the answer out loud first, then click the card to flip it.</p>
+  <div class="chips" id="fcChips"></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="fcShuffle">🔀 Shuffle</button><button class="btn" id="fcReset">↺ Reset</button><span class="sv-s" id="fcCount" style="align-self:center"></span></div>
+  <div class="fgrid" id="fcGrid"></div>
+</section>
+
+<!-- ================= MCQ ================= -->
+<section class="panel" id="mcq">
+  <div class="eyebrow">Exam practice</div>
+  <h1>✅ Multiple-choice exam</h1>
+  <p class="sub">One attempt per question — answers lock once chosen, just like the real thing.</p>
+  <div class="scorebar"><b id="mcqScore">Score: 0 / 0</b><div class="pbar"><i id="mcqProg"></i></div><span class="sv-s" id="mcqLeft"></span><button class="btn" id="mcqRestart">↺ Restart</button></div>
+  <div id="mcqList"></div>
+  <div class="final" id="mcqFinal"></div>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+"use strict";
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const NS="http://www.w3.org/2000/svg";
+function el(tag,attrs,txt){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(txt!=null)e.textContent=txt;return e;}
+
+/* ---------- panels ---------- */
+function showPanel(id){$$(".panel").forEach(p=>p.classList.toggle("active",p.id===id));$$(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.panel===id));window.scrollTo(0,0);}
+$$(".navbtn").forEach(b=>b.addEventListener("click",()=>showPanel(b.dataset.panel)));
+
+/* ---------- lessons ---------- */
+const lessons=$$(".lesson"),N=lessons.length,visited=new Set(),pills=$("#pills");
+lessons.forEach((L,i)=>{
+  const p=document.createElement("button");p.className="pill";p.textContent=(i+1)+". "+L.dataset.emoji+" "+L.dataset.title;p.addEventListener("click",()=>openLesson(i));pills.appendChild(p);
+  const nav=$(".lnav",L);
+  const prev=document.createElement("button");prev.className="btn";prev.textContent=i>0?"← "+i+". "+lessons[i-1].dataset.title:"← Overview";
+  prev.addEventListener("click",()=>{if(i>0)openLesson(i-1);else showPanel("overview");});
+  const next=document.createElement("button");next.className="btn primary";next.textContent=i<N-1?(i+2)+". "+lessons[i+1].dataset.title+" →":"Test yourself: flashcards →";
+  next.addEventListener("click",()=>{if(i<N-1)openLesson(i+1);else showPanel("flash");});
+  nav.appendChild(prev);nav.appendChild(next);
+});
+function openLesson(i){showPanel("lessons");lessons.forEach((L,j)=>L.classList.toggle("on",j===i));$$(".pill",pills).forEach((p,j)=>p.classList.toggle("on",j===i));visited.add(i);updateProgress();
+  const pl=$$(".pill",pills)[i];if(pl&&pl.scrollIntoView)pl.scrollIntoView({block:"nearest",inline:"nearest"});window.scrollTo(0,0);}
+function updateProgress(){const pct=Math.round(visited.size/N*100);$("#sideProg").style.width=pct+"%";$("#sideProgTxt").textContent=visited.size+" of "+N+" lessons visited";
+  $$(".tile").forEach((t,j)=>t.classList.toggle("done",visited.has(j)));$$(".pill",pills).forEach((p,j)=>p.classList.toggle("seen",visited.has(j)));}
+const tiles=$("#tiles"),parts={I:"Introduction",S1:"Study 1",S2:"Study 2",D:"General discussion"};let lastPart="";
+lessons.forEach((L,i)=>{
+  if(L.dataset.part!==lastPart){lastPart=L.dataset.part;const d=document.createElement("div");d.className="partlabel";d.textContent=parts[lastPart];tiles.appendChild(d);}
+  const t=document.createElement("button");t.className="tile";
+  t.innerHTML='<span class="tick">✓</span><div class="te">'+L.dataset.emoji+'</div><div class="tn">LECTURE '+(i+1)+'</div><div class="tt">'+L.dataset.title+'</div><div class="ts">'+L.dataset.sub+'</div>';
+  t.addEventListener("click",()=>openLesson(i));tiles.appendChild(t);
+});
+lessons[0].classList.add("on");$$(".pill",pills)[0].classList.add("on");
+$('.navbtn[data-panel="lessons"]').addEventListener("click",()=>{const i=lessons.findIndex(L=>L.classList.contains("on"));visited.add(i<0?0:i);updateProgress();});
+$("#synth2").innerHTML=$("#synth1").innerHTML;
+
+/* ---------- timeline ---------- */
+const TL=[
+ ["1975","Warrington","Describes selective impairment of semantic memory and argues it is hierarchically organised (superordinate, basic, exemplar levels)."],
+ ["1980","Snodgrass & Vanderwart","Publish a standardised set of 260 line drawings — the source of the 64 items used here."],
+ ["1988","Riddoch, Humphreys, Coltheart & Funnell","“Semantic systems or system?” — patients with poor semantic access but good object decision suggest a separate structural description system."],
+ ["1990","Caramazza, Hillis, Rapp & Romani","Argue against multiple semantic systems: conceptual knowledge rests on one central system."],
+ ["1992","Hodges et al. · Howard & Patterson","Semantic dementia defined as progressive fluent aphasia with temporal-lobe atrophy; the Pyramids & Palm Trees test is published."],
+ ["1994","Hodges, Patterson & Tyler","In sorting tasks, assigning items to superordinate categories outlasts finer distinctions."],
+ ["1995","Hodges, Graham & Patterson","One patient names a duck ‘duck’ → ‘swan’ → ‘bird’ → ‘animal’ over 18 months."],
+ ["1998","Lambon Ralph et al. · Devlin et al.","Feature-based scoring of drawings in a single case; a computational account of category-specific deficits from feature distribution."],
+ ["2000","Bozeat et al.","Non-verbal semantic impairment in SD with strong item consistency across modalities."],
+ ["2001","Garrard et al. · Humphreys & Forde","Typicality predicted by similarity to the category centroid; an interactive theory of object recognition."],
+ ["2002","McRae & Cree · Rogers et al.","Shared features more common in living things; a feature-only connectionist network reproduces SD when damaged."],
+ ["2003","Bozeat et al.","“A duck with four legs”: distinctive features lost, domain-shared features intrude."]
+];
+const tr=$("#tlTrack");
+TL.forEach(e=>{const b=document.createElement("button");b.className="tl-pt";b.innerHTML='<span class="yr">'+e[0]+'</span><span class="dot"></span><span class="who">'+e[1].split(/ · |, | & /)[0]+(e[1].match(/·|,|&/)?" et al.":"")+'</span>';
+ b.addEventListener("click",()=>{$$(".tl-pt").forEach(x=>x.classList.remove("on"));b.classList.add("on");$("#tlInfo").innerHTML="<b>"+e[0]+" — "+e[1]+"</b><br>"+e[2];});tr.appendChild(b);});
+
+/* ---------- DEMO 1: centroid ---------- */
+(function(){
+  const F=["flies","sings","small","nests in trees","feathers","beak","2 legs","wings","swims","webbed feet","large","long neck"];
+  const B={robin:[1,1,1,1,1,1,1,1,0,0,0,0],sparrow:[1,1,1,1,1,1,1,1,0,0,0,0],finch:[1,1,1,1,1,1,1,1,0,0,0,0],blackbird:[1,1,1,1,1,1,1,1,0,0,0,0],owl:[1,0,0,1,1,1,1,1,0,0,1,0],duck:[1,0,0,0,1,1,1,1,1,1,0,0],swan:[1,0,0,0,1,1,1,1,1,1,1,1],penguin:[0,0,0,0,1,1,1,1,1,1,0,0],ostrich:[0,0,0,0,1,1,1,1,0,0,1,1]};
+  const names=Object.keys(B);const C=F.map((_,j)=>names.reduce((s,n)=>s+B[n][j],0)/names.length);
+  const sim=n=>{let d=0,a=0,b=0;B[n].forEach((x,j)=>{d+=x*C[j];a+=x*x;b+=C[j]*C[j];});return d/Math.sqrt(a*b);};
+  const ranked=names.slice().sort((a,b)=>sim(b)-sim(a));
+  let h="<table><tr><th>Feature</th><th>Centroid</th></tr>";F.forEach((f,j)=>h+="<tr><td style='font-weight:400'>"+f+"</td><td style='font-weight:400'>"+C[j].toFixed(2)+"</td></tr>");$("#cenTable").innerHTML=h+"</table>";
+  names.forEach(n=>{const b=document.createElement("button");b.className="btn";b.textContent=n;b.addEventListener("click",()=>{$$("#cenBirds button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");
+    const s=sim(n),r=ranked.indexOf(n)+1;
+    $("#cenOut").innerHTML="<b>"+n+"</b>: similarity to the bird centroid = <b>"+s.toFixed(2)+"</b> (rank "+r+" of "+names.length+").<div class='pbar' style='max-width:300px'><i style='width:"+Math.round(s*100)+"%'></i></div>"+(r<=4?"Very close to the average bird → predicted <b>typical</b>.":r>=8?"Far from the average → predicted <b>atypical</b>. Its unusual features (swimming, size, no flight) pull it away.":"In between → moderately typical.")+"<br><span class='mini'>Full ranking: "+ranked.join(" › ")+". Similarity here = cosine similarity between the bird’s features and the centroid. Garrard et al. (2001) found that rated prototypicality is predicted by this kind of similarity to the centroid.</span>";});$("#cenBirds").appendChild(b);});
+})();
+
+/* ---------- DEMO 2: distinctiveness ---------- */
+(function(){
+  const s=$("#distSlider"),o=$("#distCalc");
+  const upd=()=>{const k=+s.value,v=k/8;o.innerHTML="Feature present in <b>"+k+" of 8</b> items → score = "+k+"/8 = <b>"+v.toFixed(3).replace(/0+$/,"").replace(/\.$/,"")+"</b> → <b style='color:"+(v>=.5?"#2f8a57":"#c0392b")+"'>"+(v>=.5?"shared":"distinctive")+"</b>"+(k===6?" <span class='mini'>(the paper’s own example: wings on 6 of 8 birds = 0.75)</span>":"")+"<div class='pbar' style='max-width:320px'><i style='width:"+v*100+"%'></i></div><span class='mini'>Cut-off: below 0.5 = distinctive; otherwise shared.</span>";};
+  s.addEventListener("input",upd);upd();
+  const Q=[["👀 eyes — in birds and land animals","domain","Shared by more than half the items in all categories of the animal domain → shared-by-domain (the paper’s example)."],
+           ["🪽 wings — in birds","category","Shared by most birds but not by most land animals → shared-by-category (the paper’s example)."],
+           ["🦒 neck — in birds and land animals","domain","The paper notes “neck” is shared by most bird and land-animal items → shared across the domain."],
+           ["🎸 neck — among artefacts","distinctive","Among artefacts only the guitar and the watering can (spout) have one → distinctive. Same feature, different category!"],
+           ["🐦 beak — in birds","category","Common among birds, absent in land animals → shared-by-category."],
+           ["🦆 iridescent green feathers — male mallard","distinctive","True of one specific exemplar → distinctive (the paper’s example)."]];
+  const lab={domain:"shared-by-domain",category:"shared-by-category",distinctive:"distinctive"};
+  const box=$("#distQuiz");
+  Q.forEach(q=>{const d=document.createElement("div");d.className="vote";d.style.gridTemplateColumns="1fr";d.innerHTML="<span>"+q[0]+"</span><span class='opts'></span><div class='fb'></div>";
+    Object.keys(lab).forEach(k=>{const b=document.createElement("button");b.className="btn";b.textContent=lab[k];b.addEventListener("click",()=>{$$("button",d).forEach(x=>x.disabled=true);b.classList.add("sel");const f=$(".fb",d);f.classList.add("show");f.innerHTML=(k===q[1]?"✅ Correct. ":"❌ It’s <b>"+lab[q[1]]+"</b>. ")+q[2];});$(".opts",d).appendChild(b);});box.appendChild(d);});
+})();
+
+/* ---------- DEMO 3: rater ---------- */
+(function(){
+  const R=[["body",8],["head",8],["beak",8],["2 legs",7],["wings",7],["webbed feet",6],["eye",5],["tail",4],["water line",2]];
+  const box=$("#raterFeats");const sel=new Set();
+  R.forEach(([f,n])=>{const d=document.createElement("div");d.className="vote";d.innerHTML="<span>"+f+" <span class='mini'>— drawn by "+n+" of 8 controls</span></span><span class='opts'></span>";
+    const b=document.createElement("button");b.className="btn";b.textContent="include";b.addEventListener("click",()=>{sel.has(f)?sel.delete(f):sel.add(f);b.classList.toggle("sel");});$(".opts",d).appendChild(b);box.appendChild(d);});
+  $("#raterScore").addEventListener("click",()=>{
+    const right=R.filter(r=>r[1]>=6).map(r=>r[0]);const mine=[...sel];
+    const ok=right.every(f=>sel.has(f))&&mine.every(f=>right.includes(f));
+    const patient=["body","head","tail"];const got=right.filter(f=>patient.includes(f));
+    const out=$("#raterOut");out.classList.add("show");
+    out.innerHTML=(ok?"✅ Your scheme matches the rule (≥ 6 of 8): ":"⚠️ With the ≥ 6/8 rule the scheme is: ")+"<b>"+right.join(", ")+"</b> — exactly the duck list reported in the paper.<br><br><b>Patient score</b> = target features present / target features = <b>"+got.length+" / "+right.length+" = "+Math.round(got.length/right.length*100)+"%</b> ("+got.join(", ")+").<br>Missing: "+right.filter(f=>!got.includes(f)).join(", ")+".<br><br>💡 Notice what the Study 1 scheme <b>cannot see</b>: the four legs (an intrusion) and the tail don’t change the score at all. That is why Study 2 added a scheme that counts intrusions.";
+  });
+})();
+
+/* ---------- Study 1 dissociation lines ---------- */
+(function(){
+  const g=$("#s1Lines");if(!g)return;const xs=[100,170,240,310,380,450];const y=p=>330-p*2.5;
+  const S=[["#2f8a57",[34,33,33,35,36,30].map(v=>v/36*100)],["#c9a96e",[63,59,58,42,27,16].map(v=>v/64*100)],["#34466b",[61,55,49,27,10,0].map(v=>v/64*100)]];
+  S.forEach(([c,vals])=>{g.appendChild(el("polyline",{points:vals.map((v,i)=>xs[i]+","+y(v)).join(" "),fill:"none",stroke:c,"stroke-width":3.5}));vals.forEach((v,i)=>g.appendChild(el("circle",{cx:xs[i],cy:y(v),r:5,fill:c})));});
+})();
+
+/* ---------- DEMO 4: profile ---------- */
+(function(){
+  const T=[["Naming",64,62.3,1],["Word–picture matching",64,63.7,1],["PPT pictures",52,51.2,1],["Rey figure copy",36,34,0],["VOSP object decision",20,16.5,0],["VOSP dot counting",10,9.9,0],["VOSP position discrim.",20,19.8,0]];
+  const P={DM:[61,63,46,34,17,10,20],MB:[55,59,42,33,14,9,20],KH:[49,58,45,33,19,10,19],GC:[27,42,35,35,14,10,20],JH:[10,27,40,36,15,10,20],FM:[0,16,34,30,15,10,15]};
+  const svg=$("#profSvg");
+  function draw(p){svg.innerHTML="";svg.appendChild(el("text",{x:14,y:24,class:"sv-b"},"Patient "+p+" — % of maximum score"));
+    T.forEach((t,i)=>{const y=44+i*38,v=P[p][i]/t[1],c=t[2]/t[1];
+      svg.appendChild(el("text",{x:14,y:y+15,class:"sv-t"},t[0]));
+      svg.appendChild(el("rect",{x:200,y:y,width:340,height:20,rx:6,fill:"#f3f0ea"}));
+      svg.appendChild(el("rect",{x:200,y:y,width:Math.max(2,340*v),height:20,rx:6,fill:t[3]?"#c0392b":"#2a7f8e"}));
+      svg.appendChild(el("line",{x1:200+340*c,y1:y-3,x2:200+340*c,y2:y+23,stroke:"#2f8a57","stroke-width":3}));
+      svg.appendChild(el("text",{x:548,y:y+15,class:"sv-b"},P[p][i]+"/"+t[1]));});
+    svg.appendChild(el("text",{x:14,y:318,class:"sv-s"},"red = semantic tests · teal = non-semantic tests · green tick = control mean"));
+    const sem=[0,1,2].reduce((s,i)=>s+P[p][i]/T[i][1],0)/3,non=[3,4,5,6].reduce((s,i)=>s+P[p][i]/T[i][1],0)/4;
+    $("#profNote").textContent="Average semantic score "+Math.round(sem*100)+"% vs non-semantic "+Math.round(non*100)+"% of maximum."+(p==="FM"?" Even FM, who cannot name a single item, copies the complex Rey figure at 30/36.":p==="DM"?" DM is mildly affected: his semantic scores are still near ceiling.":"");}
+  Object.keys(P).forEach((p,k)=>{const b=document.createElement("button");b.className="btn"+(k===0?" sel":"");b.textContent=p;b.addEventListener("click",()=>{$$("#profBtns button").forEach(x=>x.classList.remove("sel"));b.classList.add("sel");draw(p);});$("#profBtns").appendChild(b);});
+  draw("DM");
+})();
+
+/* ---------- DEMO 5: knock-out ---------- */
+(function(){
+  const SYS=[["V","👁️ Vision + praxis"],["E","🖼️ Visual episodic memory"],["S","📖 Semantic memory"]];
+  const TASKS=[["Immediate copy",{V:80}],["Delayed copy (objects)",{V:80,E:40,S:35}],["Drawing to name",{V:80,S:65}],["Delayed copy (shapes)",{V:80,E:55}]];
+  const OBS=[92,65,40,90];const off=new Set();
+  const box=$("#koSys");SYS.forEach(([k,l])=>{const b=document.createElement("button");b.className="sys";b.textContent=l;b.addEventListener("click",()=>{off.has(k)?off.delete(k):off.add(k);b.classList.toggle("off");draw();});box.appendChild(b);});
+  const svg=$("#koSvg");
+  function draw(){svg.innerHTML="";svg.appendChild(el("text",{x:14,y:22,class:"sv-b"},"Predicted performance (bars) vs what SD patients did (◆)"));
+    let match=0;
+    TASKS.forEach((t,i)=>{let v=95;Object.keys(t[1]).forEach(k=>{if(off.has(k))v-=t[1][k];});v=Math.max(5,v);const y=40+i*48;
+      svg.appendChild(el("text",{x:14,y:y+17,class:"sv-t"},t[0]));
+      svg.appendChild(el("rect",{x:200,y:y,width:360,height:24,rx:6,fill:"#f3f0ea"}));
+      svg.appendChild(el("rect",{x:200,y:y,width:360*v/100,height:24,rx:6,fill:v>70?"#8fc3a1":v>45?"#e3cfa7":"#e7a3a3"}));
+      svg.appendChild(el("text",{x:200+360*OBS[i]/100,y:y+18,"text-anchor":"middle","font-size":"16",fill:"#34466b"},"◆"));
+      if(Math.abs(v-OBS[i])<=12)match++;});
+    svg.appendChild(el("text",{x:14,y:240,class:"sv-s"},"illustrative percentages; ◆ = the qualitative SD pattern (good, worse, worst, normal)"));
+    const only=[...off].join("");
+    $("#koOut").innerHTML=!off.size?"No damage: everything near ceiling. Now try damaging one system.":(only==="S"?"✅ <b>Semantic damage alone reproduces the SD pattern</b>: immediate copy fine, delayed copy worse, drawing to name worst, and meaningless shapes normal. That is the paper’s argument.":off.has("V")?"❌ Damaging vision/praxis ruins immediate copying too — but SD patients copy well (Rey copy 30–36/36).":off.has("E")&&!off.has("S")?"❌ Episodic damage would also ruin delayed copying of shapes — but patients were within the control range (Table 7).":"🤔 Close, but this predicts poor shape copying, which patients did not show. Try semantic damage alone.")+" <span class='mini'>("+match+"/4 tasks match)</span>";}
+  draw();
+})();
+
+/* ---------- Figure 3 bars ---------- */
+(function(){
+  const g=$("#f3Bars");if(!g)return;const D=[[1.0,0.9,1.7],[2.1,4.7,6.8],[4.0,6.2,9.7]];const C=["#bcd3ea","#7fa6d9","#34466b"];
+  D.forEach((grp,i)=>grp.forEach((v,j)=>{const x=85+i*175+j*42,h=v*21.5;g.appendChild(el("rect",{x:x,y:380-h,width:36,height:h,fill:C[j],rx:3}));g.appendChild(el("text",{x:x+18,y:374-h,"text-anchor":"middle",class:"sv-s"},"≈"+v.toFixed(1)));}));
+})();
+
+/* ---------- Figure 6c/7c bars ---------- */
+(function(){
+  const g=$("#f67Bars");if(!g)return;const O=[[.10,.30,.80],[.10,.31,.83],[.30,.65,.90]],I=[[.50,.11,0],[.67,.33,0],[.67,.08,0]];const C=["#8fc3a1","#e3cfa7","#c0392b"];
+  [[O,40],[I,336]].forEach(([D,x0])=>D.forEach((grp,i)=>grp.forEach((v,j)=>{const x=x0+i*83+j*24,h=v*220;g.appendChild(el("rect",{x:x,y:320-h,width:22,height:Math.max(h,1.5),fill:C[j],rx:2}));
+    g.appendChild(el("text",{x:x+11,y:314-h,"text-anchor":"middle",class:"sv-s","font-size":"9.5"},v===0?"0":"."+String(Math.round(v*100)).padStart(2,"0")));})));
+  g.appendChild(el("text",{x:280,y:98,"text-anchor":"end",class:"sv-s"},"rate of misses"));
+  g.appendChild(el("text",{x:576,y:98,"text-anchor":"end",class:"sv-s"},"rate of false positives"));
+})();
+
+/* ---------- DEMO 6: figure explorer ---------- */
+(function(){
+  const DATA={om:{IC:[[.04,.04],[.04,.03],[.10,.08]],DC:[[.15,.08],[.32,.28],[.43,.32]],FN:[[.25,.22],[.28,.36],[.58,.58]],max:.7,lab:"rate of omissions (Fig. 4)"},
+              in:{IC:[[.0025,.0018],[.0025,.0015],[.0045,.0018]],DC:[[.006,.0018],[.016,.0055],[.020,.005]],FN:[[.0085,.005],[.0095,.0085],[.018,.012]],max:.025,lab:"rate of intrusions (Fig. 5)"}};
+  let m="om",c="FN";const svg=$("#figSvg");
+  const mk=(box,items,get,set)=>items.forEach(([k,l])=>{const b=document.createElement("button");b.className="btn"+(get()===k?" sel":"");b.textContent=l;b.addEventListener("click",()=>{set(k);$$("button",box).forEach(x=>x.classList.remove("sel"));b.classList.add("sel");draw();});box.appendChild(b);});
+  mk($("#figMeasure"),[["om","🕳️ Omissions"],["in","➕ Intrusions"]],()=>m,v=>m=v);
+  mk($("#figCond"),[["IC","Immediate copy"],["DC","Delayed copy"],["FN","Drawing from name"]],()=>c,v=>c=v);
+  function draw(){svg.innerHTML="";const d=DATA[m];svg.appendChild(el("text",{x:14,y:22,class:"sv-b"},d.lab+" · "+{IC:"immediate copy",DC:"delayed copy",FN:"drawing from name"}[c]+" · ≈ values"));
+    svg.appendChild(el("line",{x1:60,y1:230,x2:580,y2:230,stroke:"#6b7280"}));
+    ["DS","DC","IF"].forEach((p,i)=>{d[c][i].forEach((v,j)=>{const x=110+i*160+j*56,h=v/d.max*180;svg.appendChild(el("rect",{x:x,y:230-h,width:48,height:Math.max(h,1),rx:4,fill:j?"#c9a96e":"#2a7f8e"}));svg.appendChild(el("text",{x:x+24,y:224-h,"text-anchor":"middle",class:"sv-s"},(m==="in"?v.toFixed(4):v.toFixed(2)).replace(/^0/,"")));});
+      svg.appendChild(el("text",{x:162+i*160,y:250,"text-anchor":"middle",class:"sv-b"},p));});
+    svg.appendChild(el("rect",{x:400,y:36,width:12,height:12,fill:"#2a7f8e"}));svg.appendChild(el("text",{x:418,y:47,class:"sv-s"},"living"));
+    svg.appendChild(el("rect",{x:470,y:36,width:12,height:12,fill:"#c9a96e"}));svg.appendChild(el("text",{x:488,y:47,class:"sv-s"},"non-living"));
+    $("#figOut").innerHTML=m==="om"?(c==="IC"?"Omissions are rare when the picture is in view — for every patient.":"Omissions rise with severity, but living and non-living bars are similar → <b>no main effect of domain</b> (F(1, 433) = 1.63, n.s.).")
+      :(c==="IC"?"Hardly any intrusions in immediate copying (note the tiny scale).":"Living-thing drawings get clearly more intrusions → the domain effect (F(1, 433) = 55.6). Lecture 10 shows it is really an effect of <b>shared features</b>.");}
+  draw();
+})();
+
+/* ---------- DEMO 7: eroding duck ---------- */
+(function(){
+  const svg=$("#duckSvg"),out=$("#duckOut");
+  const ST=[["Healthy","All features present: body, head, eyes, 2 legs, wings, beak/bill, tail, webbed feet, green head (mallard).",""],
+            ["Mild","Distinctive features go first: the green head colour and the webbed feet disappear.","lost: distinctive"],
+            ["Moderate","The flat bill becomes a generic beak; the tail detail goes.","lost: more distinctive detail"],
+            ["Severe","Category-shared bird features (wings, beak) fade: a generic body and head remain.","lost: shared-by-category"],
+            ["Very severe","Domain-shared features dominate and INTRUDE: four legs appear — a duck with four legs.","intrusion: shared-by-domain"]];
+  function draw(s){svg.innerHTML="";const g=(t,a)=>svg.appendChild(el(t,Object.assign({stroke:"#34466b","stroke-width":2.5,fill:"#fff"},a)));
+    if(s<3)g("ellipse",{cx:130,cy:130,rx:62,ry:34});else g("rect",{x:70,y:100,width:124,height:56,rx:20});
+    g("circle",{cx:s<3?192:200,cy:s<3?86:90,r:20,fill:s<1?"#2f8a57":"#fff"});
+    g("circle",{cx:s<3?198:206,cy:s<3?82:86,r:2.5,fill:"#34466b"});
+    if(s<2)g("path",{d:"M210 84 C228 82 236 88 232 94 L210 94 Z",fill:"#f2c14e"});else if(s<3)g("path",{d:"M210 84 L226 89 L210 94 Z",fill:"#f2c14e"});
+    if(s<3)g("path",{d:"M92 124 C112 106 146 108 166 126",fill:"none"});
+    if(s<2)g("path",{d:"M70 124 L48 112 L60 136 Z"});
+    const legs=s<4?[114,142]:[90,112,152,174];legs.forEach(x=>g("line",{x1:x,y1:s<3?160:156,x2:x,y2:196,stroke:s===4?"#c0392b":"#34466b"}));
+    if(s<1)[114,142].forEach(x=>g("path",{d:"M"+(x-10)+" 196 L"+(x+10)+" 196 L"+x+" 206 Z",fill:"#f2c14e"}));
+    svg.appendChild(el("text",{x:150,y:24,"text-anchor":"middle",class:"sv-b"},ST[s][0]));
+    out.innerHTML="<b>Stage "+s+" — "+ST[s][0]+"</b><br>"+ST[s][1]+(ST[s][2]?"<br><span class='mini'>"+ST[s][2]+"</span>":"")+"<br><span class='mini'>Illustrative sequence built from the paper’s findings; real patients vary.</span>";}
+  $("#duckSlider").addEventListener("input",e=>draw(+e.target.value));draw(0);
+})();
+
+/* ---------- FLASHCARDS ---------- */
+const FC=[
+["Background","What is semantic memory?","Knowledge about objects, facts and concepts, as well as words and their meaning."],
+["Background","What is semantic dementia?","A progressive disorder with a very selective loss of conceptual knowledge across modalities, with fluent speech, caused by temporal-lobe atrophy."],
+["Background","Where is the atrophy in SD?","Polar and inferolateral temporal lobes, often bilateral, usually left &gt; right (MRI)."],
+["Background","Why is SD a good ‘testing ground’?","Its deficit is highly selective, so error patterns reveal the structure of the semantic system itself."],
+["Background","Warrington (1975)?","Semantic memory is hierarchically organised: superordinate, basic-level and exemplar levels."],
+["Background","Hodges, Graham & Patterson (1995)?","Naming a duck over 18 months: ‘duck’ → ‘swan’ → ‘bird’ → ‘animal’."],
+["Background","Three problems for a simple hierarchy?","Typicality differences (Rosch, 1973), unclear membership, and categories differing in coherence (vehicles vs household items)."],
+["Background","Garrard et al. (2001)?","Rated prototypicality is predicted by an exemplar’s feature similarity to the category centroid."],
+["Background","Rogers et al. (2002a)?","A feature-only connectionist network, when damaged, reproduces SD’s hierarchical loss without an explicit hierarchy."],
+["Features","Shared vs distinctive feature?","Shared: true of many items in a category/domain (wings on birds). Distinctive: true of one or few (a mallard’s green feathers)."],
+["Features","Which domain has more shared features?","Living things: 0.59 shared features per item vs 0.29 for artefacts."],
+["Features","How was distinctiveness calculated?","Proportion of items in the same category that include the feature (wings on 6/8 birds = 0.75), averaged over controls."],
+["Features","The three feature classes in Study 2?","Shared-by-domain (&gt; half in all categories of a domain), shared-by-category (&gt; half in one category only), distinctive (the rest)."],
+["Features","Why is ‘neck’ an interesting feature?","Shared by birds and land animals but distinctive among artefacts (only guitar and watering can): distinctiveness is category-relative."],
+["Method","Why use drawing to test semantics?","Non-verbal counterpart of feature listing; avoids anomia; easy; rich data; shows fine gradations."],
+["Method","Two drawbacks of drawing?","Premorbid drawing skill varies, and scoring is difficult (quality ratings confounded by skill)."],
+["Method","Study 1 scoring rule?","Target features = those drawn by ≥ 6 of 8 controls; score = proportion present."],
+["Method","Study 1 participants?","6 SD patients (aged 57–61) and 8 controls (aged 55–73)."],
+["Method","Which items were excluded in Study 1, and why?","Plug, barrel and alligator — controls misheard or misunderstood the names."],
+["Method","Pyramids & Palm Trees test?","Choose which of two items goes with a target (pyramid → palm tree vs pine tree), with pictures or words."],
+["Study 1","Target features drawn in Study 1?","Patients 0.53 (SD 0.31) vs controls 0.95 (SD 0.04); Mann–Whitney U = 1.5, p &lt; .01."],
+["Study 1","Correlation of drawing with naming and matching?","Spearman r = .96–.99, all p &lt; .001 → a common central cause."],
+["Study 1","Artefact drawings in SD looked…?","Simpler and box-like; distinctive features lost; intrusions very rare."],
+["Study 1","Animal drawings in SD looked…?","More prototypical, with distinctive features lost and incorrect shared features added (four legs on a duck)."],
+["Study 1","Familiarity effect?","Only a trend (t = 1.78, p = .07)."],
+["Study 2","Study 2 patients?","DS (mild), DC (moderate), IF (severe); 4 controls."],
+["Study 2","Three drawing conditions?","Immediate copy, delayed copy (≈10 s filled delay), drawing to name."],
+["Study 2","Why delayed copying of geometric shapes?","Shapes have almost no meaning: normal performance rules out a visual episodic memory explanation."],
+["Study 2","Non-perceptual prompt?","A verbal hint without visual detail: “a bird that swims on ponds, waddles on land and lays eggs”."],
+["Study 2","Omission vs intrusion?","Omission: target feature left out (no beak). Intrusion: wrong feature added (four legs)."],
+["Study 2","Order of performance across tasks?","Immediate copy &gt; delayed copy &gt; drawing to name; the gaps widen with severity."],
+["Study 2","Which error type showed a domain effect?","Intrusions (animals &gt; artefacts), not omissions."],
+["Study 2","Which features are omitted most?","Distinctive &gt; shared-by-category &gt; shared-by-domain."],
+["Study 2","Which features intrude most?","Shared-by-domain features."],
+["Study 2","What happened to the domain effect when distinctiveness was added?","It disappeared (F(1, 33) = 2.94, p &gt; .1): animals just have more shared features to intrude."],
+["Study 2","Geometric shapes result (Table 7)?","Patients within the control range; at the low end only for difficult shapes (16.7 vs 22.0)."],
+["Discussion","Main conclusion?","SD reflects degradation of a unitary, amodal but highly distributed semantic system."],
+["Discussion","Rival account?","A separate structural description system (Riddoch et al., 1988) damaged in addition to semantics — not refuted."],
+["Discussion","Authors’ preferred account?","Interactive: visual–structural representations depend on feedback from conceptual knowledge (cf. Humphreys & Forde, 2001)."],
+["Discussion","Parallel between drawing and naming errors?","Over-extending visual properties (four legs on a duck) parallels over-extending names of typical items to less familiar ones."]
+];
+const topics=["All",...new Set(FC.map(f=>f[0]))];let fcTopic="All",fcOrder=FC.map((_,i)=>i);
+function renderFC(){const g=$("#fcGrid");g.innerHTML="";const list=fcOrder.filter(i=>fcTopic==="All"||FC[i][0]===fcTopic);
+  list.forEach(i=>{const f=FC[i];const c=document.createElement("div");c.className="fc";c.setAttribute("role","button");c.setAttribute("tabindex","0");
+    c.innerHTML="<div class='fc-in'><div class='fc-f'><span class='tp'>"+f[0]+"</span><div class='q'>"+f[1]+"</div><span class='hint'>click to flip ↻</span></div><div class='fc-b'><span class='tp' style='font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:#a8854a;font-weight:700'>Answer</span><div style='margin-top:6px'>"+f[2]+"</div></div></div>";
+    const flip=()=>c.classList.toggle("flip");c.addEventListener("click",flip);c.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();flip();}});g.appendChild(c);});
+  $("#fcCount").textContent=list.length+" cards";}
+const chipsEl=$("#fcChips");topics.forEach(t=>{const b=document.createElement("button");b.className="btn"+(t==="All"?" sel":"");b.textContent=t;b.addEventListener("click",()=>{fcTopic=t;$$("button",chipsEl).forEach(x=>x.classList.remove("sel"));b.classList.add("sel");renderFC();});chipsEl.appendChild(b);});
+$("#fcShuffle").addEventListener("click",()=>{fcOrder=shuffle(fcOrder);renderFC();});
+$("#fcReset").addEventListener("click",()=>{fcOrder=FC.map((_,i)=>i);fcTopic="All";$$("button",chipsEl).forEach((x,i)=>x.classList.toggle("sel",i===0));renderFC();});
+renderFC();$("#statFc").textContent=FC.length;
+
+/* ---------- MCQ ---------- */
+const MQ=[
+["Semantic dementia is best characterised as…",["a progressive loss of episodic memory for recent events","a selective, progressive loss of conceptual knowledge with fluent speech","a visuospatial disorder affecting copying","a disorder of speech production with preserved comprehension"],1,"SD is a very selective impairment of conceptual knowledge; speech stays fluent while vocabulary is lost in both production and comprehension."],
+["The atrophy in the SD patients of this study was mainly located in the…",["occipital lobes","parietal lobes","polar and inferolateral temporal lobes","cerebellum"],2,"MRI showed focal atrophy of the polar and inferolateral temporal lobes, usually left &gt; right."],
+["A patient names a picture of a duck as ‘duck’, later ‘swan’, then ‘bird’ and finally ‘animal’. This pattern was originally taken as support for…",["a hierarchical organisation of semantic memory","a separate structural description system","an episodic memory deficit","a category-specific deficit for artefacts"],0,"Warrington (1975) and the longitudinal naming data suggest earliest degradation at the exemplar level of a hierarchy."],
+["Rogers et al. (2002a) showed that damaging a connectionist network that stores only features…",["could not produce SD-like errors","reproduced the hierarchical pattern of loss without explicitly coding a hierarchy","caused random errors","affected artefacts more than living things"],1,"The hierarchy can emerge from feature overlap."],
+["According to Garrard et al. (2001), rated prototypicality is best predicted by…",["word frequency","an exemplar’s feature similarity to the category centroid","the number of distinctive features","age of acquisition"],1,"Typicality = similarity to the average (centroid) of the category’s feature patterns."],
+["Why did the authors choose drawing as a test of semantic knowledge?",["It measures artistic ability","It avoids the problem of anomia and gives a rich, non-verbal picture of feature knowledge","It is the only test SD patients fail","It requires complex instructions"],1,"Drawing is a non-verbal counterpart of feature listing that sidesteps naming problems."],
+["In Study 1, a feature was included in the scoring scheme when it…",["was drawn by at least 6 of the 8 controls","was drawn by all patients","was named by the patient","appeared in the Snodgrass & Vanderwart picture"],0,"Target features reflect what most healthy participants draw, regardless of drawing skill."],
+["Patients in Study 1 drew what proportion of target features, compared with controls?",["0.95 vs 0.53","0.53 vs 0.95","0.29 vs 0.59","0.75 vs 0.95"],1,"Patient mean 0.53 (SD 0.31) vs control mean 0.95 (SD 0.04); U = 1.5, p &lt; .01."],
+["Drawing correlated with naming and word–picture matching at r = .96–.99. The authors conclude that…",["drawing and naming use separate systems","all three impairments reflect damage to central conceptual knowledge","drawing is a motor task","patients have visual agnosia"],1,"The ability to respond in each task depends on the same remaining conceptual knowledge."],
+["In Study 1, drawings of artefacts by SD patients tended to become…",["more detailed","box-like, with distinctive features lost","more prototypical with many intrusions","cross-domain"],1,"Artefacts lost distinctive features and became simpler and box-like; intrusions were very rare."],
+["Which Study 2 condition relies most heavily on semantic memory?",["Immediate copying","Delayed copying","Drawing to name","Delayed copying of geometric shapes"],2,"Without a picture, the drawing depends almost entirely on the concept."],
+["Why did Study 2 include delayed copying of geometric shapes?",["To measure drawing skill","To rule out a visual episodic memory explanation of poor delayed copying","To measure typicality","To test naming"],1,"Shapes have little meaning; normal performance means the problem with objects is semantic."],
+["In Study 2, the differences between the three drawing tasks…",["were the same for all patients","increased with the severity of the semantic deficit","disappeared in the most severe patient","were only present for artefacts"],1,"Task × patient interaction: immediate copying stayed good while the others deteriorated with severity."],
+["Which error type showed a significant effect of domain (animals vs artefacts) in the initial analyses?",["Omissions","Intrusions","Both equally","Neither"],1,"Omissions: domain n.s. Intrusions: more for animals, F(1, 433) = 55.6."],
+["Features that were omitted MOST often were…",["shared-by-domain","shared-by-category","distinctive","all equally"],2,"Distinctive &gt; shared-by-category &gt; shared-by-domain."],
+["Features that intruded MOST often were…",["distinctive","shared-by-category","shared-by-domain","artefact features"],2,"Intrusions came mainly from the pool of properties shared across the domain."],
+["When feature distinctiveness was added to the analysis, the domain difference in intrusions…",["became larger","disappeared","reversed","was unchanged"],1,"Domain became n.s. (F(1, 33) = 2.94): animals simply have more shared features (0.59 vs 0.29) to intrude."],
+["A patient draws a duck with four legs. The best explanation according to Bozeat et al. is that…",["she has a visuospatial deficit","a feature shared across the animal domain intrudes as distinctive duck knowledge fades","she is copying the previous drawing","she has a motor planning problem"],1,"Shared, domain-wide features are the most robust and most likely to intrude."],
+["Which alternative account do the authors say their data cannot refute?",["That SD is an episodic memory disorder","That poor drawing reflects additional damage to an independent structural description system","That SD affects only artefacts","That drawing depends on language"],1,"They acknowledge they cannot refute it, but prefer an interactive account."],
+["Why do the authors prefer an interactive account over a separate structural description system?",["Because object decision was impaired","Because drawing correlates strongly with verbal semantic tasks and distinctive visual features are the most vulnerable","Because patients could not copy","Because controls drew poorly"],1,"A separate visual store cannot explain the tight link with verbal tasks or the distinctiveness pattern."],
+["Which is a LIMITATION of drawing as an assessment, according to the authors?",["It requires verbal output","It tells us nothing about how an object is used or where it is found","It cannot show single-feature loss","It is slow to administer"],1,"Drawing covers visual-feature knowledge only; it misses function and context."]
+];
+let mScore=0,mDone=0;
+function renderMCQ(){const L=$("#mcqList");L.innerHTML="";mScore=0;mDone=0;$("#mcqFinal").style.display="none";
+  MQ.forEach((q,i)=>{const d=document.createElement("div");d.className="mcq";d.innerHTML="<div class='qn'>QUESTION "+(i+1)+" OF "+MQ.length+"</div><div class='qt'>"+q[0]+"</div>";
+    q[1].forEach((o,k)=>{const b=document.createElement("button");b.className="opt";b.innerHTML=String.fromCharCode(97+k)+") "+o;b.addEventListener("click",()=>{
+      $$(".opt",d).forEach((x,j)=>{x.disabled=true;if(j===q[2])x.classList.add("right");});if(k!==q[2])b.classList.add("wrong");else mScore++;mDone++;d.classList.add("done");updScore();});d.appendChild(b);});
+    const ex=document.createElement("div");ex.className="expl";ex.innerHTML="<b>Why:</b> "+q[3];d.appendChild(ex);L.appendChild(d);});updScore();}
+function updScore(){$("#mcqScore").textContent="Score: "+mScore+" / "+mDone;$("#mcqProg").style.width=(mDone/MQ.length*100)+"%";$("#mcqLeft").textContent=(MQ.length-mDone)+" left";
+  if(mDone===MQ.length){const p=Math.round(mScore/MQ.length*100);const f=$("#mcqFinal");f.style.display="block";f.innerHTML="<div class='eyebrow'>Final result</div><b>"+p+"%</b><p>"+mScore+" of "+MQ.length+" correct. "+(p>=90?"Excellent — you are exam-ready, Sezen.":p>=70?"Good work. Revisit the lectures linked to the questions you missed.":"Keep going: re-read the key insights, try the flashcards, then restart.")+"</p>";}}
+$("#mcqRestart").addEventListener("click",()=>{renderMCQ();window.scrollTo(0,0);});
+renderMCQ();$("#statMcq").textContent=MQ.length;
+updateProgress();
+})();
+</script>
+</body>
+</html>
